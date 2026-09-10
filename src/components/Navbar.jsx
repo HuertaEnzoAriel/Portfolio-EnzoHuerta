@@ -66,7 +66,7 @@ export default function Navbar() {
       {/* Menú mobile — sección 7: flex-col, aparece solo si mobileOpen es true */}
       {mobileOpen && (
         <div className="md:hidden flex flex-col gap-1 px-6 pb-4 text-slate-700 font-medium border-t border-slate-100">
-          <a href="#" className="py-2 hover:text-teal-600">About Us</a>
+          <a href="#" className="py-2 hover:text-teal-600">About Me</a>
           <a href="#" className="py-2 hover:text-teal-600">Skills</a>
           <a href="#" className="py-2 hover:text-teal-600">Projects</a>
           <a href="#" className="py-2 hover:text-teal-600">Experience</a>
