@@ -27,7 +27,7 @@ const experiencias = [
 
 export default function Experiencia() {
   return (
-    <section id="experiencia" className="relative w-full bg-slate-50 py-20 md:py-28">
+    <section id="experiencia" className="relative w-full bg-white py-20 md:py-28">
       <div className="max-w-4xl mx-auto px-6">
         <p className="text-slate-500 mb-2 text-center md:text-left">
           Mi trayectoria
