@@ -1,5 +1,6 @@
 import Navbar from "./components/Navbar";
 import Home from "./components/Home";
+import Experiencia from "./components/Experiencia";
 import Footer from "./components/Footer";
 
 export default function App() {
@@ -8,6 +9,7 @@ export default function App() {
       <Navbar />
       <main className="flex-1 md:pt-20">
         <Home />
+        <Experiencia />
       </main>
       <Footer />
     </div>
