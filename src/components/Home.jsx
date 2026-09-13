@@ -1,4 +1,4 @@
-import profilePic from "../assets/profile-caricatura.jpeg";
+import profilePic from "../assets/profile-caricatura.png";
 
 export default function Home() {
   return (
