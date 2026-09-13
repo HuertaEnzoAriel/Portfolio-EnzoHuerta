@@ -22,7 +22,7 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <nav className="w-full bg-white shadow-sm relative">
+    <nav className="w-full bg-white shadow-sm relative md:fixed md:top-0 md:left-0 md:z-50">
       {/* Barra principal — sección 4 y 3 del apunte: flex + justify-between + espaciado */}
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between md:grid md:grid-cols-3 h-20">
         {/* Logo — sección 4: flex items-center para alinear ícono y texto */}
