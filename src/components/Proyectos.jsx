@@ -1,3 +1,7 @@
+import portfolioImg from "../assets/proyecto-portfolio.png";
+import ventasAppImg from "../assets/proyecto-ventasapp.png";
+import trucoImg from "../assets/proyecto-truco.png";
+
 const LinkIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M14 3h7v7M21 3l-9 9M19 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6" />
@@ -16,21 +20,21 @@ const proyectos = [
     descripcion:
       "Landing page de presentación construida con React, Vite y Tailwind CSS, con secciones de habilidades, experiencia y contacto.",
     tags: ["React", "Vite", "Tailwind CSS"],
-    gradient: "from-indigo-500 to-teal-400",
+    imagen: portfolioImg,
   },
   {
     titulo: "VentasApp",
     descripcion:
       "Aplicación web de gestion de ventas, reparto, stock y clientes. Construida con Codeigniter 4 y php, con base de datos MySQL y diseño responsive.",
     tags: ["Php", "Bootstrap", "CSS"],
-    gradient: "from-teal-400 to-indigo-500",
+    imagen: ventasAppImg,
   },
   {
     titulo: "Anotador de Truco",
     descripcion:
       "Anotador gratuito de Truco Argentino, construido con HTML y JavaScript, con almacenamiento de datos en LocalStorage.",
     tags: ["JavaScript", "HTML5", "LocalStorage"],
-    gradient: "from-indigo-400 to-pink-400",
+    imagen: trucoImg,
   },
 ];
 
@@ -46,12 +50,16 @@ export default function Proyectos() {
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {proyectos.map(({ titulo, descripcion, tags, gradient }) => (
+          {proyectos.map(({ titulo, descripcion, tags, imagen }) => (
             <div
               key={titulo}
               className="flex flex-col rounded-2xl border border-slate-100 bg-white shadow-sm hover:shadow-lg transition-shadow overflow-hidden"
             >
-              <div className={`h-40 bg-gradient-to-br ${gradient}`} />
+              <img
+                src={imagen}
+                alt={titulo}
+                className="h-40 w-full object-cover"
+              />
 
               <div className="flex flex-col flex-1 p-6">
                 <h3 className="text-lg font-semibold text-slate-900 mb-2">
