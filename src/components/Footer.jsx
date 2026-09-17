@@ -41,7 +41,7 @@ export default function Footer() {
       className="relative bg-white/90 dark:bg-slate-950/70 backdrop-blur-md text-slate-600 dark:text-slate-200 py-16 transition-colors duration-500"
       style={{ clipPath: "polygon(0 8%, 60% 0, 100% 0, 100% 100%, 0 100%)" }}
     >
-      <div className="max-w-7xl mx-auto px-6 flex items-center justify-center gap-6">
+      <div className="max-w-7xl mx-auto px-6 flex items-center justify-center gap-6" id="footer">
         {socials.map(({ label, href, Icon }) => (
           <a
             key={label}

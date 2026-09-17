@@ -2,7 +2,7 @@ import profilePic from "../assets/profile-caricatura.png";
 
 export default function Home() {
   return (
-    <section className="relative w-full overflow-hidden">
+    <section className="relative w-full overflow-hidden"  id="home">
       {/* Formas decorativas sueltas, como en la referencia */}
       <span className="hidden md:block absolute top-10 left-8 w-3 h-3 rounded-full bg-indigo-600 dark:bg-indigo-400" />
       <svg

@@ -19,7 +19,7 @@ export default function Habilidades() {
   return (
     <section id="habilidades" className="relative w-full py-20 md:py-28">
       <div className="max-w-6xl mx-auto px-6">
-        <p className="text-slate-500 dark:text-slate-400 mb-2 text-center md:text-left">
+        <p className="text-slate-500 dark:text-slate-400 mb-2 text-center md:text-left" id="habilidades">
           Lo que sé hacer
         </p>
         <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-14 text-center md:text-left">

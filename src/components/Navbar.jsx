@@ -54,11 +54,11 @@ export default function Navbar() {
 
         {/* Links de escritorio — grid-cols-3 en el padre + justify-self-center para centrarlos en la columna del medio */}
         <div className="hidden md:flex items-center justify-self-center gap-8 text-slate-700 dark:text-slate-200 font-medium">
-          <a href="#" className="hover:text-blue-600 dark:hover:text-teal-300 transition-colors">About</a>
-          <a href="#" className="hover:text-blue-600 dark:hover:text-teal-300 transition-colors">Skills</a>
-          <a href="#" className="hover:text-blue-600 dark:hover:text-teal-300 transition-colors">Projects</a>
-          <a href="#" className="hover:text-blue-600 dark:hover:text-teal-300 transition-colors">Experience</a>
-          <a href="#" className="hover:text-blue-600 dark:hover:text-teal-300 transition-colors">Contact</a>
+          <a href="#home" className="hover:text-blue-600 dark:hover:text-teal-300 transition-colors">About</a>
+          <a href="#habilidades" className="hover:text-blue-600 dark:hover:text-teal-300 transition-colors">Skills</a>
+          <a href="#proyectos" className="hover:text-blue-600 dark:hover:text-teal-300 transition-colors">Projects</a>
+          <a href="#experiencia" className="hover:text-blue-600 dark:hover:text-teal-300 transition-colors">Experience</a>
+          <a href="#footer" className="hover:text-blue-600 dark:hover:text-teal-300 transition-colors">Contact</a>
 
           {/* Dropdown — sección 8: relative en el padre, absolute en el menú */}
 
