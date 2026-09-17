@@ -21,6 +21,7 @@ const proyectos = [
       "Landing page de presentación construida con React, Vite y Tailwind CSS, con secciones de habilidades, experiencia y contacto.",
     tags: ["React", "Vite", "Tailwind CSS"],
     imagen: portfolioImg,
+    link: "",
   },
   {
     titulo: "VentasApp",
@@ -28,6 +29,7 @@ const proyectos = [
       "Aplicación web de gestion de ventas, reparto, stock y clientes. Construida con Codeigniter 4 y php, con base de datos MySQL y diseño responsive.",
     tags: ["Php", "Bootstrap", "CSS"],
     imagen: ventasAppImg,
+    link: "https://www.ventasapp.site",
   },
   {
     titulo: "Anotador de Truco",
@@ -35,6 +37,7 @@ const proyectos = [
       "Anotador gratuito de Truco Argentino, construido con HTML y JavaScript, con almacenamiento de datos en LocalStorage.",
     tags: ["JavaScript", "HTML5", "LocalStorage"],
     imagen: trucoImg,
+    link: "https://anotador.dpdns.org",
   },
 ];
 
@@ -50,7 +53,7 @@ export default function Proyectos() {
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {proyectos.map(({ titulo, descripcion, tags, imagen }) => (
+          {proyectos.map(({ titulo, descripcion, tags, imagen, link }) => (
             <div
               key={titulo}
               className="flex flex-col rounded-2xl border border-slate-100 dark:border-white/10 bg-white/90 dark:bg-white/5 shadow-sm hover:shadow-lg dark:shadow-none dark:hover:bg-white/10 transition-all overflow-hidden"
@@ -82,7 +85,9 @@ export default function Proyectos() {
 
                 <div className="flex items-center gap-4 text-sm font-medium">
                   <a
-                    href="#"
+                    href={link}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="flex items-center gap-1.5 text-teal-600 hover:text-teal-700 dark:text-teal-300 dark:hover:text-teal-200 transition-colors"
                   >
                     <LinkIcon /> Ver demo
