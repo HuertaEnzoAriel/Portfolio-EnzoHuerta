@@ -81,7 +81,7 @@ export default function Home() {
             <img
               src={profilePic}
               alt="Retrato caricaturesco de Enzo Huerta"
-              className="relative w-full rounded-2xl object-cover shadow-xl"
+              className="relative w-full rounded-2xl object-cover"
             />
           </div>
         </div>
