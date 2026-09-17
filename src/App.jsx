@@ -24,7 +24,7 @@ export default function App() {
         />
       </div>
       <Navbar />
-      <main className="flex-1 md:pt-20">
+      <main className="flex-1 pt-20">
         <Home />
         <Habilidades />
         <Proyectos />
