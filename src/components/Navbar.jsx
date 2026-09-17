@@ -1,5 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTheme } from "../context/ThemeContext";
+
+// Textos y tiempos del efecto de escritura del nombre en el navbar.
+// Modificá estos valores para cambiar los textos, la velocidad y las pausas del efecto.
+const NAV_TEXTS = ["Enzo Huerta", "Desarrollador Web"]; // agregá o quitá frases acá
+const TYPING_SPEED_MS = 80; // ms entre cada letra al escribir
+const DELETING_SPEED_MS = 25; // ms entre cada letra al borrar
+const PAUSE_AFTER_TYPING_MS = 2000; // tiempo que queda el texto completo antes de empezar a borrar
+const PAUSE_AFTER_DELETING_MS = 500; // tiempo vacío antes de volver a escribir
 
 // Íconos como SVG inline, sin depender de lucide-react
 const ChevronDown = ({ size = 16 }) => (
@@ -34,6 +42,37 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
 
+  const [displayedName, setDisplayedName] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [textIndex, setTextIndex] = useState(0);
+
+  const currentText = NAV_TEXTS[textIndex];
+
+  useEffect(() => {
+    let timeoutId;
+
+    if (!isDeleting && displayedName === currentText) {
+      // Terminó de escribir: espera antes de empezar a borrar
+      timeoutId = setTimeout(() => setIsDeleting(true), PAUSE_AFTER_TYPING_MS);
+    } else if (isDeleting && displayedName === "") {
+      // Terminó de borrar: espera, pasa al siguiente texto y vuelve a escribir
+      timeoutId = setTimeout(() => {
+        setTextIndex((prev) => (prev + 1) % NAV_TEXTS.length);
+        setIsDeleting(false);
+      }, PAUSE_AFTER_DELETING_MS);
+    } else {
+      const nextName = isDeleting
+        ? currentText.slice(0, displayedName.length - 1)
+        : currentText.slice(0, displayedName.length + 1);
+      timeoutId = setTimeout(
+        () => setDisplayedName(nextName),
+        isDeleting ? DELETING_SPEED_MS : TYPING_SPEED_MS
+      );
+    }
+
+    return () => clearTimeout(timeoutId);
+  }, [displayedName, isDeleting, currentText]);
+
   return (
     <nav className="w-full bg-white/90 dark:bg-slate-950/70 backdrop-blur-md shadow-sm dark:shadow-none dark:border-b dark:border-white/10 fixed top-0 left-0 z-50 transition-colors duration-500">
       {/* Barra principal — sección 4 y 3 del apunte: flex + justify-between + espaciado */}
@@ -49,7 +88,10 @@ export default function Navbar() {
               </linearGradient>
             </defs>
           </svg>
-          <span className="text-xl font-semibold text-slate-800 dark:text-white">Enzo Huerta</span>
+          <span className="text-xl font-semibold text-slate-800 dark:text-white">
+            {displayedName}
+            <span className="animate-pulse">|</span>
+          </span>
         </div>
 
         {/* Links de escritorio — grid-cols-3 en el padre + justify-self-center para centrarlos en la columna del medio */}

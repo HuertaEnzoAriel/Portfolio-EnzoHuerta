@@ -43,7 +43,7 @@ export default function Home() {
               href="#footer"
               className="bg-teal-600 hover:bg-teal-700 text-white font-medium px-6 py-3 rounded-md transition-colors"
             >
-              Contratame
+              Contactame
             </a>
           </div>
         </div>

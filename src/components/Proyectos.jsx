@@ -90,7 +90,7 @@ export default function Proyectos() {
                     rel="noopener noreferrer"
                     className="flex items-center gap-1.5 text-teal-600 hover:text-teal-700 dark:text-teal-300 dark:hover:text-teal-200 transition-colors"
                   >
-                    <LinkIcon /> Ver demo
+                    <LinkIcon /> Ir
                   </a>
                   <a
                     href="#"
