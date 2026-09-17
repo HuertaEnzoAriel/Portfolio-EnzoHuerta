@@ -4,8 +4,8 @@ const experiencias = [
     titulo: "Estudiante de Desarrollo Web",
     lugar: "Facultad — Tercer año",
     descripcion:
-      "Formándome en el desarrollo frontend moderno: HTML, CSS, JavaScript y React, aplicando buenas prácticas de componentización y diseño responsive en cada proyecto de la carrera.",
-    tags: ["React", "JavaScript", "Tailwind CSS", "Git"],
+      "Formándome en el desarrollo Fullstack Moderno: HTML, CSS, JavaScript, React, Python, Laravel aplicando buenas prácticas de componentización y diseño responsive en cada proyecto de la carrera.",
+    tags: ["React", "JavaScript", "Tailwind CSS","Python","Laravel","Git"],
   },
   {
     periodo: "2024",
@@ -16,7 +16,7 @@ const experiencias = [
     tags: ["React", "Vite", "UI/UX"],
   },
   {
-    periodo: "2024 — 2025",
+    periodo: "2026",
     titulo: "Proyectos Personales",
     lugar: "Portafolio propio",
     descripcion:

@@ -5,14 +5,14 @@ const CodeIcon = () => (
 );
 
 const habilidades = [
-  { nombre: "HTML5", nivel: 90 },
-  { nombre: "CSS3", nivel: 88 },
-  { nombre: "JavaScript", nivel: 70 },
-  { nombre: "React", nivel: 65 },
-  { nombre: "Tailwind CSS", nivel: 85 },
-  { nombre: "Git & GitHub", nivel: 65 },
-  { nombre: "Vite", nivel: 60 },
-  { nombre: "Diseño Responsive", nivel: 85 },
+  { nombre: "HTML5", nivel: 60 },
+  { nombre: "CSS3", nivel: 55 },
+  { nombre: "JavaScript", nivel: 45 },
+  { nombre: "React", nivel: 10 },
+  { nombre: "Tailwind CSS", nivel: 10 },
+  { nombre: "Git & GitHub", nivel: 68 },
+  { nombre: "Vite", nivel: 15 },
+  { nombre: "Diseño Responsive", nivel: 65 },
 ];
 
 export default function Habilidades() {

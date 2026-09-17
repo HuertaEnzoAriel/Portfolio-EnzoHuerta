@@ -19,17 +19,17 @@ const proyectos = [
     gradient: "from-indigo-500 to-teal-400",
   },
   {
-    titulo: "Clon de E-commerce",
+    titulo: "VentasApp",
     descripcion:
-      "Interfaz de tienda online con catálogo de productos, carrito de compras y diseño totalmente responsive.",
-    tags: ["React", "JavaScript", "CSS"],
+      "Aplicación web de gestion de ventas, reparto, stock y clientes. Construida con Codeigniter 4 y php, con base de datos MySQL y diseño responsive.",
+    tags: ["Php", "Bootstrap", "CSS"],
     gradient: "from-teal-400 to-indigo-500",
   },
   {
-    titulo: "Task Tracker",
+    titulo: "Anotador de Truco",
     descripcion:
-      "Aplicación para gestionar tareas: crear, completar y eliminar pendientes, con estado manejado en React.",
-    tags: ["React", "useState", "LocalStorage"],
+      "Anotador gratuito de Truco Argentino, construido con HTML y JavaScript, con almacenamiento de datos en LocalStorage.",
+    tags: ["JavaScript", "HTML5", "LocalStorage"],
     gradient: "from-indigo-400 to-pink-400",
   },
 ];
