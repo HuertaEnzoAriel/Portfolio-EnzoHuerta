@@ -38,7 +38,7 @@ const socials = [
 export default function Footer() {
   return (
     <footer
-      className="relative bg-[#1e1b4b] text-indigo-200 py-16"
+      className="relative bg-white/90 dark:bg-slate-950/70 backdrop-blur-md text-slate-600 dark:text-slate-200 py-16 transition-colors duration-500"
       style={{ clipPath: "polygon(0 8%, 60% 0, 100% 0, 100% 100%, 0 100%)" }}
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-center gap-6">
@@ -47,7 +47,7 @@ export default function Footer() {
             key={label}
             href={href}
             aria-label={label}
-            className="flex items-center justify-center w-11 h-11 rounded-full border border-indigo-700 text-indigo-200 hover:text-white hover:border-white hover:bg-indigo-800 transition-colors"
+            className="flex items-center justify-center w-11 h-11 rounded-full border border-slate-300 dark:border-white/10 text-slate-600 dark:text-slate-200 hover:text-slate-900 hover:border-slate-400 hover:bg-slate-100 dark:hover:text-white dark:hover:border-white/30 dark:hover:bg-white/10 transition-colors"
           >
             <Icon />
           </a>

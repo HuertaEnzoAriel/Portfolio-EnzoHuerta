@@ -27,34 +27,34 @@ const experiencias = [
 
 export default function Experiencia() {
   return (
-    <section id="experiencia" className="relative w-full bg-white py-20 md:py-28">
+    <section id="experiencia" className="relative w-full py-20 md:py-28">
       <div className="max-w-4xl mx-auto px-6">
-        <p className="text-slate-500 mb-2 text-center md:text-left">
+        <p className="text-slate-500 dark:text-slate-400 mb-2 text-center md:text-left">
           Mi trayectoria
         </p>
-        <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-14 text-center md:text-left">
+        <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-14 text-center md:text-left">
           Experiencia
         </h2>
 
-        <ol className="relative border-l-2 border-indigo-100 pl-8 space-y-12">
+        <ol className="relative border-l-2 border-indigo-100 dark:border-indigo-400/20 pl-8 space-y-12">
           {experiencias.map(({ periodo, titulo, lugar, descripcion, tags }) => (
             <li key={titulo} className="relative">
-              <span className="absolute -left-[41px] top-1 w-4 h-4 rounded-full bg-gradient-to-br from-indigo-500 to-teal-400 ring-4 ring-white" />
+              <span className="absolute -left-[41px] top-1 w-4 h-4 rounded-full bg-gradient-to-br from-indigo-500 to-teal-400 ring-4 ring-white dark:ring-slate-950" />
 
-              <span className="inline-block text-sm font-medium text-teal-600 bg-teal-50 px-3 py-1 rounded-full mb-3">
+              <span className="inline-block text-sm font-medium text-teal-600 dark:text-teal-300 bg-teal-50 dark:bg-teal-500/10 px-3 py-1 rounded-full mb-3">
                 {periodo}
               </span>
 
-              <h3 className="text-xl font-semibold text-slate-900">{titulo}</h3>
-              <p className="text-slate-500 mb-3">{lugar}</p>
+              <h3 className="text-xl font-semibold text-slate-900 dark:text-white">{titulo}</h3>
+              <p className="text-slate-500 dark:text-slate-400 mb-3">{lugar}</p>
 
-              <p className="text-slate-600 max-w-2xl mb-4">{descripcion}</p>
+              <p className="text-slate-600 dark:text-slate-300 max-w-2xl mb-4">{descripcion}</p>
 
               <div className="flex flex-wrap gap-2">
                 {tags.map((tag) => (
                   <span
                     key={tag}
-                    className="text-xs font-medium text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full"
+                    className="text-xs font-medium text-indigo-600 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-500/10 px-3 py-1 rounded-full"
                   >
                     {tag}
                   </span>

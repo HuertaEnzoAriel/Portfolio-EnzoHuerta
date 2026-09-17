@@ -17,12 +17,12 @@ const habilidades = [
 
 export default function Habilidades() {
   return (
-    <section id="habilidades" className="relative w-full bg-white py-20 md:py-28">
+    <section id="habilidades" className="relative w-full py-20 md:py-28">
       <div className="max-w-6xl mx-auto px-6">
-        <p className="text-slate-500 mb-2 text-center md:text-left">
+        <p className="text-slate-500 dark:text-slate-400 mb-2 text-center md:text-left">
           Lo que sé hacer
         </p>
-        <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-14 text-center md:text-left">
+        <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-14 text-center md:text-left">
           Habilidades
         </h2>
 
@@ -30,21 +30,21 @@ export default function Habilidades() {
           {habilidades.map(({ nombre, nivel }) => (
             <div
               key={nombre}
-              className="flex flex-col items-center text-center gap-3 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow p-6"
+              className="flex flex-col items-center text-center gap-3 rounded-2xl border border-slate-100 dark:border-white/10 bg-white/60 dark:bg-white/5 shadow-sm hover:shadow-md dark:shadow-none dark:hover:bg-white/10 transition-all p-6"
             >
-              <span className="flex items-center justify-center w-12 h-12 rounded-full bg-indigo-50 text-indigo-600">
+              <span className="flex items-center justify-center w-12 h-12 rounded-full bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-300">
                 <CodeIcon />
               </span>
-              <h3 className="font-semibold text-slate-900">{nombre}</h3>
+              <h3 className="font-semibold text-slate-900 dark:text-white">{nombre}</h3>
 
               <div className="w-full">
-                <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+                <div className="w-full h-2 rounded-full bg-slate-100 dark:bg-white/10 overflow-hidden">
                   <div
                     className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-teal-400"
                     style={{ width: `${nivel}%` }}
                   />
                 </div>
-                <span className="mt-2 inline-block text-xs font-medium text-slate-500">
+                <span className="mt-2 inline-block text-xs font-medium text-slate-500 dark:text-slate-400">
                   {nivel}%
                 </span>
               </div>

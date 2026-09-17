@@ -40,12 +40,12 @@ const proyectos = [
 
 export default function Proyectos() {
   return (
-    <section id="proyectos" className="relative w-full bg-slate-50 py-20 md:py-28">
+    <section id="proyectos" className="relative w-full py-20 md:py-28">
       <div className="max-w-6xl mx-auto px-6">
-        <p className="text-slate-500 mb-2 text-center md:text-left">
+        <p className="text-slate-500 dark:text-slate-400 mb-2 text-center md:text-left">
           Algunos de mis trabajos
         </p>
-        <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-14 text-center md:text-left">
+        <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-14 text-center md:text-left">
           Proyectos
         </h2>
 
@@ -53,7 +53,7 @@ export default function Proyectos() {
           {proyectos.map(({ titulo, descripcion, tags, imagen }) => (
             <div
               key={titulo}
-              className="flex flex-col rounded-2xl border border-slate-100 bg-white shadow-sm hover:shadow-lg transition-shadow overflow-hidden"
+              className="flex flex-col rounded-2xl border border-slate-100 dark:border-white/10 bg-white/90 dark:bg-white/5 shadow-sm hover:shadow-lg dark:shadow-none dark:hover:bg-white/10 transition-all overflow-hidden"
             >
               <img
                 src={imagen}
@@ -62,10 +62,10 @@ export default function Proyectos() {
               />
 
               <div className="flex flex-col flex-1 p-6">
-                <h3 className="text-lg font-semibold text-slate-900 mb-2">
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
                   {titulo}
                 </h3>
-                <p className="text-slate-600 text-sm mb-4 flex-1">
+                <p className="text-slate-600 dark:text-slate-300 text-sm mb-4 flex-1">
                   {descripcion}
                 </p>
 
@@ -73,7 +73,7 @@ export default function Proyectos() {
                   {tags.map((tag) => (
                     <span
                       key={tag}
-                      className="text-xs font-medium text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full"
+                      className="text-xs font-medium text-indigo-600 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-500/10 px-3 py-1 rounded-full"
                     >
                       {tag}
                     </span>
@@ -83,13 +83,13 @@ export default function Proyectos() {
                 <div className="flex items-center gap-4 text-sm font-medium">
                   <a
                     href="#"
-                    className="flex items-center gap-1.5 text-teal-600 hover:text-teal-700 transition-colors"
+                    className="flex items-center gap-1.5 text-teal-600 hover:text-teal-700 dark:text-teal-300 dark:hover:text-teal-200 transition-colors"
                   >
                     <LinkIcon /> Ver demo
                   </a>
                   <a
                     href="#"
-                    className="flex items-center gap-1.5 text-slate-500 hover:text-slate-700 transition-colors"
+                    className="flex items-center gap-1.5 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
                   >
                     <CodeIcon /> Código
                   </a>

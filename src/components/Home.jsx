@@ -2,11 +2,11 @@ import profilePic from "../assets/profile-caricatura.png";
 
 export default function Home() {
   return (
-    <section className="relative w-full overflow-hidden bg-slate-50">
+    <section className="relative w-full overflow-hidden">
       {/* Formas decorativas sueltas, como en la referencia */}
-      <span className="hidden md:block absolute top-10 left-8 w-3 h-3 rounded-full bg-indigo-600" />
+      <span className="hidden md:block absolute top-10 left-8 w-3 h-3 rounded-full bg-indigo-600 dark:bg-indigo-400" />
       <svg
-        className="hidden md:block absolute top-14 right-16 w-6 h-6 text-indigo-400"
+        className="hidden md:block absolute top-14 right-16 w-6 h-6 text-indigo-400 dark:text-indigo-300"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -15,7 +15,7 @@ export default function Home() {
         <path d="M12 2 L22 12 L12 22 L2 12 Z" />
       </svg>
       <svg
-        className="hidden md:block absolute bottom-16 left-[38%] w-10 h-10 text-indigo-300"
+        className="hidden md:block absolute bottom-16 left-[38%] w-10 h-10 text-indigo-300 dark:text-indigo-400/60"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -27,15 +27,15 @@ export default function Home() {
       <div className="max-w-7xl mx-auto px-6 py-16 md:py-24 grid md:grid-cols-2 items-center gap-12">
         {/* Columna de texto */}
         <div>
-          <p className="text-slate-500 mb-4">
-            Hola, mi nombre es <span className="font-medium text-slate-700">Enzo Huerta</span>
+          <p className="text-slate-500 dark:text-slate-300 mb-4">
+            Hola, mi nombre es <span className="font-medium text-slate-700 dark:text-white">Enzo Huerta</span>
           </p>
-          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 leading-tight mb-6">
+          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white leading-tight mb-6">
             Descubrí Mi Trabajo con Soluciones Creativas
           </h1>
-          <p className="text-slate-500 max-w-md mb-8">
-            Soy un desarrollador web apasionado por crear experiencias digitales únicas y funcionales. 
-            Mi enfoque se centra en combinar diseño atractivo con un rendimiento excepcional, 
+          <p className="text-slate-500 dark:text-slate-300 max-w-md mb-8">
+            Soy un desarrollador web apasionado por crear experiencias digitales únicas y funcionales.
+            Mi enfoque se centra en combinar diseño atractivo con un rendimiento excepcional,
             asegurando que cada proyecto no solo se vea bien, sino que también funcione de manera eficiente.
           </p>
           <div className="flex items-center gap-4">
