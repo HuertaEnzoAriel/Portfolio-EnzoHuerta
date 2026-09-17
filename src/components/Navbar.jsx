@@ -36,6 +36,20 @@ const Moon = ({ size = 20 }) => (
     <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" />
   </svg>
 );
+// Logo "</>"
+const CodeLogo = ({ size = 26 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <path d="M8 7 3 12l5 5" stroke="url(#logo-grad)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M16 7l5 5-5 5" stroke="url(#logo-grad)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M13.5 4.5l-3 15" stroke="url(#logo-grad)" strokeWidth="2" strokeLinecap="round" />
+    <defs>
+      <linearGradient id="logo-grad" x1="0" y1="0" x2="24" y2="24">
+        <stop offset="0%" stopColor="#6366f1" />
+        <stop offset="100%" stopColor="#ec4899" />
+      </linearGradient>
+    </defs>
+  </svg>
+);
 
 export default function Navbar() {
   const [pagesOpen, setPagesOpen] = useState(false);
@@ -79,15 +93,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between md:grid md:grid-cols-3 h-20">
         {/* Logo — sección 4: flex items-center para alinear ícono y texto */}
         <div className="flex items-center gap-2">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-            <path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z" fill="url(#grad)" />
-            <defs>
-              <linearGradient id="grad" x1="0" y1="0" x2="24" y2="24">
-                <stop offset="0%" stopColor="#6366f1" />
-                <stop offset="100%" stopColor="#ec4899" />
-              </linearGradient>
-            </defs>
-          </svg>
+          <CodeLogo size={26} />
           <span className="text-xl font-semibold text-slate-800 dark:text-white">
             {displayedName}
             <span className="animate-pulse">|</span>

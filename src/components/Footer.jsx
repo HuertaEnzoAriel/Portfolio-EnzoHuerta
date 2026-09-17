@@ -24,9 +24,9 @@ const LinkedinIcon = () => (
     <path d="M6.94 8.5H3.56V21h3.38V8.5ZM5.25 3a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM20.44 21h-3.37v-6.4c0-1.53-.03-3.5-2.13-3.5-2.14 0-2.47 1.67-2.47 3.39V21H9.1V8.5h3.24v1.71h.05c.45-.85 1.55-1.75 3.19-1.75 3.41 0 4.86 2.24 4.86 5.14V21Z" />
   </svg>
 );
-const TwitterIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M22 5.9c-.7.3-1.5.6-2.3.7a4 4 0 0 0 1.8-2.2c-.8.5-1.6.8-2.6 1a4 4 0 0 0-6.9 3.7A11.4 11.4 0 0 1 3.7 4.6a4 4 0 0 0 1.3 5.4c-.7 0-1.3-.2-1.9-.5v.1a4 4 0 0 0 3.3 4 4 4 0 0 1-1.9.1 4 4 0 0 0 3.8 2.8A8 8 0 0 1 2 18.6a11.3 11.3 0 0 0 6.3 1.9c7.5 0 11.7-6.4 11.7-11.9v-.5c.8-.6 1.5-1.3 2-2.2Z" />
+const XIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
   </svg>
 );
 const MailIcon = () => (
@@ -53,11 +53,36 @@ const CloseIcon = () => (
 );
 
 const socials = [
-  { label: "GitHub", href: "#", Icon: GithubIcon },
-  { label: "LinkedIn", href: "#", Icon: LinkedinIcon },
-  { label: "Instagram", href: "#", Icon: InstagramIcon },
-  { label: "Twitter", href: "#", Icon: TwitterIcon },
-  { label: "Facebook", href: "#", Icon: FacebookIcon },
+  {
+    label: "GitHub",
+    href: "#",
+    Icon: GithubIcon,
+    colorClass: "text-slate-900 dark:text-white hover:text-teal-600 dark:hover:text-teal-300",
+  },
+  {
+    label: "LinkedIn",
+    href: "#",
+    Icon: LinkedinIcon,
+    colorClass: "text-slate-900 dark:text-white hover:text-blue-700 dark:hover:text-blue-500",
+  },
+  {
+    label: "Instagram",
+    href: "#",
+    Icon: InstagramIcon,
+    colorClass: "text-slate-900 dark:text-white hover:text-red-600 dark:hover:text-red-400",
+  },
+  {
+    label: "X",
+    href: "#",
+    Icon: XIcon,
+    colorClass: "text-slate-900 dark:text-white hover:text-blue-700 dark:hover:text-blue-500",
+  },
+  {
+    label: "Facebook",
+    href: "#",
+    Icon: FacebookIcon,
+    colorClass: "text-slate-900 dark:text-white hover:text-blue-700 dark:hover:text-blue-500",
+  },
 ];
 
 const CONTACT_EMAIL = "enzo.a.h75@gmail.com";
@@ -174,44 +199,48 @@ export default function Footer() {
       style={{ clipPath: "polygon(0 8%, 60% 0, 100% 0, 100% 100%, 0 100%)" }}
     >
       <div className="max-w-7xl mx-auto px-6">
-        <div className="flex flex-col items-center text-center gap-3">
-          <p className="text-slate-500 dark:text-slate-400">¿Tenés un proyecto en mente?</p>
-          <h2 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
-            Hablemos
-          </h2>
-
-          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mt-2 text-sm">
-            <a
-              href={`mailto:${CONTACT_EMAIL}`}
-              className="flex items-center gap-2 hover:text-teal-600 dark:hover:text-teal-300 transition-colors"
-            >
-              <MailIcon /> {CONTACT_EMAIL}
-            </a>
-            <a
-              href={WHATSAPP_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 hover:text-teal-600 dark:hover:text-teal-300 transition-colors"
-            >
-              <PhoneIcon /> {CONTACT_PHONE_DISPLAY}
-            </a>
+        <div className="flex flex-col items-center text-center gap-3 md:flex-row md:items-center md:justify-between md:text-left md:gap-8">
+          <div className="flex flex-col items-center text-center gap-1 md:items-start md:text-left">
+            <p className="text-slate-500 dark:text-slate-400">¿Tenés un proyecto en mente?</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
+              Hablemos
+            </h2>
           </div>
 
-          <button
-            onClick={() => setModalOpen(true)}
-            className="mt-4 flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white font-medium px-6 py-3 rounded-md transition-colors"
-          >
-            <SendIcon /> Enviar un mensaje
-          </button>
+          <div className="flex flex-col items-center gap-4 md:flex-row md:items-center md:gap-6">
+            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mt-2 text-sm md:mt-0 md:flex-nowrap">
+              <a
+                href={`mailto:${CONTACT_EMAIL}`}
+                className="flex items-center gap-2 hover:text-teal-600 dark:hover:text-teal-300 transition-colors"
+              >
+                <MailIcon /> {CONTACT_EMAIL}
+              </a>
+              <a
+                href={WHATSAPP_LINK}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 hover:text-teal-600 dark:hover:text-teal-300 transition-colors"
+              >
+                <PhoneIcon /> {CONTACT_PHONE_DISPLAY}
+              </a>
+            </div>
+
+            <button
+              onClick={() => setModalOpen(true)}
+              className="mt-4 flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white font-medium px-6 py-3 rounded-md transition-colors md:mt-0 shrink-0"
+            >
+              <SendIcon /> Enviar un mensaje
+            </button>
+          </div>
         </div>
 
         <div className="flex items-center justify-center gap-6 mt-12 pt-8 border-t border-slate-200 dark:border-white/10">
-          {socials.map(({ label, href, Icon }) => (
+          {socials.map(({ label, href, Icon, colorClass }) => (
             <a
               key={label}
               href={href}
               aria-label={label}
-              className="flex items-center justify-center w-11 h-11 rounded-full border border-slate-300 dark:border-white/10 text-slate-600 dark:text-slate-200 hover:text-slate-900 hover:border-slate-400 hover:bg-slate-100 dark:hover:text-white dark:hover:border-white/30 dark:hover:bg-white/10 transition-colors"
+              className={`flex items-center justify-center w-11 h-11 rounded-full border border-slate-300 dark:border-white/10 hover:border-slate-400 hover:bg-slate-100 dark:hover:border-white/30 dark:hover:bg-white/10 transition-colors ${colorClass}`}
             >
               <Icon />
             </a>
