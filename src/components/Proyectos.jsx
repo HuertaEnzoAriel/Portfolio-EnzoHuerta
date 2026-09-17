@@ -43,7 +43,7 @@ const proyectos = [
 
 export default function Proyectos() {
   return (
-    <section id="proyectos" className="relative w-full py-20 md:py-28" id="proyectos">
+    <section id="proyectos" className="relative w-full py-20 md:py-28">
       <div className="max-w-6xl mx-auto px-6">
         <p className="text-slate-500 dark:text-slate-400 mb-2 text-center md:text-left">
           Algunos de mis trabajos
