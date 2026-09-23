@@ -37,7 +37,7 @@ const DEFAULT_CONFIG = {
   defaultText:
     '¡Hola! ¿En qué puedo ayudarte?',
 
-  modelUrl: 'models/metalslug.gif',
+  modelUrl: 'models/clippy.gif',
 
   side: 'right',
   corner: null,
