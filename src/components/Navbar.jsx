@@ -106,7 +106,7 @@ export default function Navbar() {
           <a href="#habilidades" className="hover:text-blue-600 dark:hover:text-teal-300 transition-colors">Habilidades</a>
           <a href="#proyectos" className="hover:text-blue-600 dark:hover:text-teal-300 transition-colors">Proyectos</a>
           <a href="#experiencia" className="hover:text-blue-600 dark:hover:text-teal-300 transition-colors">Experiencia</a>
-          <a href="#footer" className="hover:text-blue-600 dark:hover:text-teal-300 transition-colors">Contacto</a>
+          <a href="#contacto" className="hover:text-blue-600 dark:hover:text-teal-300 transition-colors">Contacto</a>
 
           {/* Dropdown — sección 8: relative en el padre, absolute en el menú */}
 

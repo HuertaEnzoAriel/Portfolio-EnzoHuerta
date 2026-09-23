@@ -40,7 +40,7 @@ export default function Home() {
           </p>
           <div className="flex items-center gap-4">
             <a
-              href="#footer"
+              href="#contacto"
               className="bg-teal-600 hover:bg-teal-700 text-white font-medium px-6 py-3 rounded-md transition-colors"
             >
               Contactame

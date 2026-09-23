@@ -6,6 +6,8 @@ import Experiencia from "./components/Experiencia";
 import Footer from "./components/Footer";
 import Aurora from "./components/Aurora";
 import { useTheme } from "./context/ThemeContext";
+import LlmAvatarAssistant from "./components/LlmAvatarAssistant";
+import "./styles.css";
 
 const DARK_COLOR_STOPS = ["#5227FF", "#7cff67", "#5227FF"];
 const LIGHT_COLOR_STOPS = ["#6366f1", "#14b8a6", "#ec4899"];
@@ -15,6 +17,7 @@ export default function App() {
 
   return (
     <div className="relative isolate min-h-screen flex flex-col bg-slate-50 dark:bg-[#050414] transition-colors duration-500">
+
       <div className="fixed inset-0 -z-10 h-screen w-screen">
         <Aurora
           colorStops={theme === "dark" ? DARK_COLOR_STOPS : LIGHT_COLOR_STOPS}
@@ -23,14 +26,20 @@ export default function App() {
           blend={theme === "dark" ? 0.55 : 4.0}
         />
       </div>
+
       <Navbar />
+
       <main className="flex-1 pt-20">
         <Home />
         <Habilidades />
         <Proyectos />
         <Experiencia />
       </main>
+
       <Footer />
+
+      <LlmAvatarAssistant />
+
     </div>
   );
 }

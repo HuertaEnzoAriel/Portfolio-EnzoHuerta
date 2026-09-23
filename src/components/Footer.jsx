@@ -194,7 +194,7 @@ export default function Footer() {
 
   return (
     <footer
-      id="footer"
+      id="contacto"
       className="relative bg-white/90 dark:bg-slate-950/70 backdrop-blur-md text-slate-600 dark:text-slate-200 pt-16 pb-10 transition-colors duration-500"
       style={{ clipPath: "polygon(0 8%, 60% 0, 100% 0, 100% 100%, 0 100%)" }}
     >
