@@ -26,6 +26,11 @@ import {
   scrollToSection,
 } from './sectionScanner.js';
 
+import {
+  buildSystemPrompt,
+  DEFAULT_SYSTEM_PROMPT,
+} from './systemPrompt.js';
+
 import { displayMarkdown } from './utils.js';
 
 const DEFAULT_CONFIG = {
@@ -46,11 +51,10 @@ const DEFAULT_CONFIG = {
 
   sectionDiscovery: 'auto',
 
-  systemPrompt:
-    'You are a friendly assistant embedded in this page. ' +
-    'Answer concisely (2–4 sentences). ' +
-    'When relevant, mention ONE of the on-page sections by its exact title ' +
-    'so the user can be taken there. Do not invent sections.',
+  systemPrompt: DEFAULT_SYSTEM_PROMPT,
+
+  // Máximo de caracteres de cada sección que se mandan como contexto
+  knowledgeMaxChars: 1200,
 
   streaming: true,
 };
@@ -180,20 +184,15 @@ export default function LlmAvatarAssistant({
 
       stickToBottom.current = true;
 
-      const pageContext = sectionsRef.current
-        .map(
-          (s) => `- ${s.title} (id: ${s.id})`
-        )
-        .join('\n');
-
+      // Se arma en cada pregunta para leer el contenido actual de la página
       const messages = [
         {
           role: 'system',
-          content:
-            cfg.systemPrompt +
-            (pageContext
-              ? `\n\nOn-page sections:\n${pageContext}`
-              : ''),
+          content: buildSystemPrompt({
+            rules: cfg.systemPrompt,
+            sections: sectionsRef.current,
+            maxChars: cfg.knowledgeMaxChars,
+          }),
         },
         {
           role: 'user',

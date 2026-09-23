@@ -8,12 +8,13 @@
  * Matching strategy (robust + deterministic, no fuzzy surprises):
  *   1. The host registers its sections via config: either an explicit list of
  *      {id, title, aliases[]} entries, or "auto" — in which case we read every
- *      <section id> / <h2 id> in the document and build entries automatically.
+ *      <section id> / <footer id> / <h2 id> in the document and build entries
+ *      automatically.
  *   2. A section is "referenced" when the model text contains its id or any of
  *      its titles/aliases, with case-insensitive, diacritic-insensitive, whole
  *      boundary matching (so "Hero" does not match "heroic").
- *   3. We return the FIRST referenced section in scan order; the component
- *      scrolls to it (and can highlight the matched text).
+ *   3. We return the referenced section that appears FIRST IN THE TEXT; the
+ *      component scrolls to it (and can highlight the matched text).
  */
 
 import { normalize } from './utils.js';
@@ -39,7 +40,7 @@ export function collectSections(doc = globalThis.document, explicit) {
 
   const out = [];
   const seen = new Set();
-  const nodes = doc.querySelectorAll('section[id], h2[id], h3[id]');
+  const nodes = doc.querySelectorAll('section[id], footer[id], h2[id], h3[id]');
   nodes.forEach((node) => {
     const id = node.getAttribute('id');
     if (!id || seen.has(id)) return;
@@ -67,7 +68,7 @@ export function collectSections(doc = globalThis.document, explicit) {
 }
 
 /**
- * Scan `text` for the first referenced section.
+ * Scan `text` for the referenced section that appears first in the text.
  *
  * @param {string} text
  * @param {Array} sections output of collectSections()
@@ -77,16 +78,17 @@ export function findSectionReference(text, sections) {
   if (!text || !Array.isArray(sections) || !sections.length) return null;
   const hay = normalize(text);
 
+  let best = null;
   for (const s of sections) {
     const candidates = buildCandidates(s);
     for (const cand of candidates) {
       const idx = indexOfDiacriticInsensitive(hay, cand);
-      if (idx !== -1) {
-        return { section: s, matched: cand, index: idx };
+      if (idx !== -1 && (!best || idx < best.index)) {
+        best = { section: s, matched: cand, index: idx };
       }
     }
   }
-  return null;
+  return best;
 }
 
 /**

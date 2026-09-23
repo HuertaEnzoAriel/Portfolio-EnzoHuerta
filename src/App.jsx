@@ -12,6 +12,19 @@ import "./styles.css";
 const DARK_COLOR_STOPS = ["#5227FF", "#7cff67", "#5227FF"];
 const LIGHT_COLOR_STOPS = ["#6366f1", "#14b8a6", "#ec4899"];
 
+// Fuera del componente para que no se recree en cada render
+const ASSISTANT_CONFIG = {
+  // Baja para que el modelo copie los datos tal cual y no invente
+  temperature: 0.1,
+  sectionDiscovery: [
+    { id: "home", title: "Inicio", aliases: ["Sobre mí"] },
+    { id: "habilidades", title: "Habilidades" },
+    { id: "proyectos", title: "Proyectos" },
+    { id: "experiencia", title: "Experiencia" },
+    { id: "contacto", title: "Contacto", aliases: ["Hablemos"] },
+  ],
+};
+
 export default function App() {
   const { theme } = useTheme();
 
@@ -38,7 +51,7 @@ export default function App() {
 
       <Footer />
 
-      <LlmAvatarAssistant />
+      <LlmAvatarAssistant config={ASSISTANT_CONFIG} />
 
     </div>
   );
