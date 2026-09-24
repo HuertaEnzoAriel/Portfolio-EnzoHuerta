@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useTheme } from "../context/ThemeContext";
+import { useTheme } from "../context/theme";
 
 // Textos y tiempos del efecto de escritura del nombre en el navbar.
 // Modificá estos valores para cambiar los textos, la velocidad y las pausas del efecto.
@@ -9,12 +9,16 @@ const DELETING_SPEED_MS = 25; // ms entre cada letra al borrar
 const PAUSE_AFTER_TYPING_MS = 2000; // tiempo que queda el texto completo antes de empezar a borrar
 const PAUSE_AFTER_DELETING_MS = 500; // tiempo vacío antes de volver a escribir
 
+// Links de navegación, compartidos entre el menú de escritorio y el mobile
+const NAV_LINKS = [
+  { href: "#home", label: "Sobre mí" },
+  { href: "#habilidades", label: "Habilidades" },
+  { href: "#proyectos", label: "Proyectos" },
+  { href: "#experiencia", label: "Experiencia" },
+  { href: "#contacto", label: "Contacto" },
+];
+
 // Íconos como SVG inline, sin depender de lucide-react
-const ChevronDown = ({ size = 16 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M6 9l6 6 6-6" />
-  </svg>
-);
 const Menu = ({ size = 24 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <path d="M3 12h18M3 6h18M3 18h18" />
@@ -52,7 +56,6 @@ const CodeLogo = ({ size = 26 }) => (
 );
 
 export default function Navbar() {
-  const [pagesOpen, setPagesOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
 
@@ -102,14 +105,11 @@ export default function Navbar() {
 
         {/* Links de escritorio — grid-cols-3 en el padre + justify-self-center para centrarlos en la columna del medio */}
         <div className="hidden md:flex items-center justify-self-center gap-8 text-slate-700 dark:text-slate-200 font-medium">
-          <a href="#home" className="whitespace-nowrap hover:text-blue-600 dark:hover:text-teal-300 transition-colors">Sobre mi</a>
-          <a href="#habilidades" className="hover:text-blue-600 dark:hover:text-teal-300 transition-colors">Habilidades</a>
-          <a href="#proyectos" className="hover:text-blue-600 dark:hover:text-teal-300 transition-colors">Proyectos</a>
-          <a href="#experiencia" className="hover:text-blue-600 dark:hover:text-teal-300 transition-colors">Experiencia</a>
-          <a href="#contacto" className="hover:text-blue-600 dark:hover:text-teal-300 transition-colors">Contacto</a>
-
-          {/* Dropdown — sección 8: relative en el padre, absolute en el menú */}
-
+          {NAV_LINKS.map(({ href, label }) => (
+            <a key={href} href={href} className="whitespace-nowrap hover:text-blue-600 dark:hover:text-teal-300 transition-colors">
+              {label}
+            </a>
+          ))}
         </div>
 
         {/* Toggle de tema + botón hamburguesa (mobile) */}
@@ -125,7 +125,9 @@ export default function Navbar() {
           <button
             className="md:hidden text-slate-800 dark:text-white"
             onClick={() => setMobileOpen((v) => !v)}
-            aria-label="Abrir menú"
+            aria-label={mobileOpen ? "Cerrar menú" : "Abrir menú"}
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-menu"
           >
             {mobileOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -134,12 +136,17 @@ export default function Navbar() {
 
       {/* Menú mobile — sección 7: flex-col, aparece solo si mobileOpen es true */}
       {mobileOpen && (
-        <div className="md:hidden flex flex-col gap-1 px-6 pb-4 text-slate-700 dark:text-slate-200 font-medium border-t border-slate-100 dark:border-white/10">
-          <a href="#" className="py-2 hover:text-teal-600 dark:hover:text-teal-300">About Me</a>
-          <a href="#" className="py-2 hover:text-teal-600 dark:hover:text-teal-300">Skills</a>
-          <a href="#" className="py-2 hover:text-teal-600 dark:hover:text-teal-300">Projects</a>
-          <a href="#" className="py-2 hover:text-teal-600 dark:hover:text-teal-300">Experience</a>
-          <a href="#" className="py-2 hover:text-teal-600 dark:hover:text-teal-300">Contact</a>
+        <div id="mobile-menu" className="md:hidden flex flex-col gap-1 px-6 pb-4 text-slate-700 dark:text-slate-200 font-medium border-t border-slate-100 dark:border-white/10">
+          {NAV_LINKS.map(({ href, label }) => (
+            <a
+              key={href}
+              href={href}
+              onClick={() => setMobileOpen(false)}
+              className="py-2 hover:text-teal-600 dark:hover:text-teal-300"
+            >
+              {label}
+            </a>
+          ))}
         </div>
       )}
     </nav>

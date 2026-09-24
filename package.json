@@ -1,7 +1,8 @@
 {
-  "name": "mi-app",
+  "name": "portfolio-enzo-huerta",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "Portfolio personal de Enzo Huerta con un asistente IA local (llama.cpp)",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -14,8 +15,7 @@
     "ogl": "^1.0.11",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "tailwindcss": "^4.3.3",
-    "three": "^0.186.0"
+    "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
     "@types/react": "^19.2.18",

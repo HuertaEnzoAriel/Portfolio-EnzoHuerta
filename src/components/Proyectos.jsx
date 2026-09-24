@@ -1,6 +1,6 @@
-import portfolioImg from "../assets/proyecto-portfolio.png";
-import ventasAppImg from "../assets/proyecto-ventasapp.png";
-import trucoImg from "../assets/proyecto-truco.png";
+import portfolioImg from "../assets/proyecto-portfolio.webp";
+import ventasAppImg from "../assets/proyecto-ventasapp.webp";
+import trucoImg from "../assets/proyecto-truco.webp";
 
 const LinkIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -14,22 +14,26 @@ const CodeIcon = () => (
   </svg>
 );
 
+// `link` es el sitio publicado y `repo` el código fuente;
+// si alguno queda vacío, su botón no se muestra
 const proyectos = [
   {
     titulo: "Portfolio Personal",
     descripcion:
-      "Landing page de presentación construida con React, Vite y Tailwind CSS, con secciones de habilidades, experiencia y contacto.",
-    tags: ["React", "Vite", "Tailwind CSS"],
+      "Portfolio construido con React, Vite y Tailwind CSS, con modo claro/oscuro y un asistente IA que responde preguntas sobre el contenido usando un modelo local con llama.cpp.",
+    tags: ["React", "Tailwind CSS", "llama.cpp"],
     imagen: portfolioImg,
     link: "",
+    repo: "https://github.com/HuertaEnzoAriel/react-frontend",
   },
   {
     titulo: "VentasApp",
     descripcion:
-      "Aplicación web de gestion de ventas, reparto, stock y clientes. Construida con Codeigniter 4 y php, con base de datos MySQL y diseño responsive.",
-    tags: ["Php", "Bootstrap", "CSS"],
+      "Aplicación web de gestión de ventas, reparto, stock y clientes. Construida con CodeIgniter 4 y PHP, con base de datos MySQL y diseño responsive.",
+    tags: ["PHP", "CodeIgniter 4", "MySQL", "Bootstrap"],
     imagen: ventasAppImg,
     link: "https://www.ventasapp.site",
+    repo: "",
   },
   {
     titulo: "Anotador de Truco",
@@ -38,8 +42,11 @@ const proyectos = [
     tags: ["JavaScript", "HTML5", "LocalStorage"],
     imagen: trucoImg,
     link: "https://anotador.dpdns.org",
+    repo: "",
   },
 ];
+
+const linkStyles = "flex items-center gap-1.5 transition-colors";
 
 export default function Proyectos() {
   return (
@@ -53,14 +60,16 @@ export default function Proyectos() {
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {proyectos.map(({ titulo, descripcion, tags, imagen, link }) => (
+          {proyectos.map(({ titulo, descripcion, tags, imagen, link, repo }) => (
             <div
               key={titulo}
               className="flex flex-col rounded-2xl border border-slate-100 dark:border-white/10 bg-white/90 dark:bg-white/5 shadow-sm hover:shadow-lg dark:shadow-none dark:hover:bg-white/10 transition-all overflow-hidden"
             >
               <img
                 src={imagen}
-                alt={titulo}
+                alt={`Captura de pantalla de ${titulo}`}
+                loading="lazy"
+                decoding="async"
                 className="h-40 w-full object-cover"
               />
 
@@ -84,20 +93,28 @@ export default function Proyectos() {
                 </div>
 
                 <div className="flex items-center gap-4 text-sm font-medium">
-                  <a
-                    href={link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 text-teal-600 hover:text-teal-700 dark:text-teal-300 dark:hover:text-teal-200 transition-colors"
-                  >
-                    <LinkIcon /> Ir
-                  </a>
-                  <a
-                    href="#"
-                    className="flex items-center gap-1.5 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
-                  >
-                    <CodeIcon /> Código
-                  </a>
+                  {link && (
+                    <a
+                      href={link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Ver ${titulo} en línea`}
+                      className={`${linkStyles} text-teal-600 hover:text-teal-700 dark:text-teal-300 dark:hover:text-teal-200`}
+                    >
+                      <LinkIcon /> Ver sitio
+                    </a>
+                  )}
+                  {repo && (
+                    <a
+                      href={repo}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Ver el código de ${titulo} en GitHub`}
+                      className={`${linkStyles} text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200`}
+                    >
+                      <CodeIcon /> Código
+                    </a>
+                  )}
                 </div>
               </div>
             </div>

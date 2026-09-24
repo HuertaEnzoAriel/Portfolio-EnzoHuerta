@@ -1,154 +1,129 @@
 /**
  * llmClient.js
  *
- * Minimal, dependency-free client for any OpenAI-compatible chat endpoint —
- * this covers llama.cpp's `llama-server` out of the box.
+ * Cliente mínimo, sin dependencias, para cualquier endpoint de chat compatible
+ * con la API de OpenAI (por ejemplo `llama-server` de llama.cpp).
  *
- * Why a hand-rolled client instead of `openai`/`@openai/openai`?
- *   - Zero added dependency weight for a drop-in component.
- *   - Full control over the request shape (llama.cpp accepts the standard
- *     `chat/completions` route plus a few extra knobs we expose).
- *   - Easy to test: we inject `fetch`, so unit tests never touch the network.
+ * API:
+ *   createLlmClient(config)                  -> LlmClient
+ *   LlmClient.chat(messages)                 -> Promise<string>
+ *   LlmClient.chatStream(messages, onToken)  -> Promise<string>
+ *   LlmClient.ping()                         -> Promise<boolean>
  *
- * Public API:
- *   createLlmClient(config)          -> LlmClient
- *   LlmClient.chat(messages, opts?)  -> Promise<string>   (non-streaming)
- *   LlmClient.chatStream(messages, onToken, opts?) -> Promise<string>
- *   LlmClient.getModelInfo()         -> Promise<string>   (best-effort model id)
+ * Los errores que lanza tienen `code` para que la interfaz pueda mostrar un
+ * mensaje claro:
+ *   'network' -> no hay servidor escuchando en la URL (llama-server apagado)
+ *   'timeout' -> el servidor no respondió a tiempo
+ *   'http'    -> el servidor respondió con error (`status` trae el código)
  */
 
-const DEFAULT_TIMEOUT_MS = 120_000; // local models can be slow on first token
+const DEFAULT_TIMEOUT_MS = 120_000; // los modelos locales pueden tardar en el primer token
+const PING_TIMEOUT_MS = 4_000;
 
 /**
- * Build an LlmClient.
- *
  * @param {object} config
- * @param {string} config.baseUrl  e.g. "http://192.168.1.2:8080/v1" or "/v1"
+ * @param {string} config.baseUrl  p. ej. "http://127.0.0.1:8080/v1" o "/v1"
  * @param {string} [config.apiKey]
- * @param {string} [config.model]  model id to send in the payload
+ * @param {string} [config.model]
  * @param {number} [config.timeoutMs]
- * @param {typeof fetch} [fetchImpl] injectable for tests
- * @param {object}   [config.extra] extra body fields merged into requests
+ * @param {object} [config.extra]  campos extra que se suman al body (temperature, etc.)
  */
 export function createLlmClient({
   baseUrl,
   apiKey = '',
   model = 'default',
   timeoutMs = DEFAULT_TIMEOUT_MS,
-  fetchImpl = globalThis.fetch,
   extra = {},
 }) {
-  if (!baseUrl) throw new Error('llmClient: baseUrl is required');
+  if (!baseUrl) throw new Error('llmClient: baseUrl es obligatorio');
 
-  // Normalise: strip a trailing slash so `${baseUrl}/chat/completions` is
-  // always exactly one slash, even when callers pass ".../v1/".
+  // Sin barra final, así `${base}/chat/completions` siempre queda bien armado
   const base = baseUrl.replace(/\/+$/, '');
 
-  function buildHeaders() {
-    const headers = { 'Content-Type': 'application/json' };
+  function buildHeaders(json) {
+    const headers = {};
+    if (json) headers['Content-Type'] = 'application/json';
     if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`;
     return headers;
   }
 
-  function withTimeout(incomingSignal) {
+  async function request(path, { method = 'GET', body, timeout = timeoutMs } = {}) {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(new Error('llmClient: timeout')), timeoutMs);
-    const onAbort = () => controller.abort();
-    if (incomingSignal && typeof incomingSignal.addEventListener === 'function') {
-      if (incomingSignal.aborted) controller.abort();
-      else incomingSignal.addEventListener('abort', onAbort, { once: true });
-    }
-    return {
-      signal: controller.signal,
-      cleanup: () => {
-        clearTimeout(timer);
-        if (incomingSignal && typeof incomingSignal.removeEventListener === 'function') {
-          incomingSignal.removeEventListener('abort', onAbort);
-        }
-      },
-    };
-  }
-
-  async function request(path, body, { signal } = {}) {
-    const t = withTimeout(signal && signal.aborted !== undefined ? signal : null);
+    const timer = setTimeout(() => controller.abort(), timeout);
     let res;
     try {
-      res = await fetchImpl(`${base}${path}`, {
-        method: 'POST',
-        headers: buildHeaders(),
-        body: JSON.stringify({ model, ...body, ...extra }),
-        signal: t.signal,
+      res = await fetch(`${base}${path}`, {
+        method,
+        headers: buildHeaders(body !== undefined),
+        body: body !== undefined ? JSON.stringify(body) : undefined,
+        signal: controller.signal,
       });
     } catch (err) {
-      const e = new Error(`llmClient: request failed (${err?.message || 'network'})`);
-      e.cause = err;
-      throw e;
+      throw llmError(
+        controller.signal.aborted ? 'timeout' : 'network',
+        `llmClient: sin respuesta de ${base} (${err?.message || 'network'})`,
+        { cause: err }
+      );
     } finally {
-      t.cleanup();
+      // El timeout cubre hasta recibir los headers; el streaming puede durar más
+      clearTimeout(timer);
     }
 
     if (!res.ok) {
       let detail = '';
       try {
-        const txt = await res.text();
-        detail = txt.slice(0, 400);
-      } catch { /* ignore */ }
-      const e = new Error(`llmClient: HTTP ${res.status} ${res.statusText} ${detail}`.trim());
-      e.status = res.status;
-      throw e;
+        detail = (await res.text()).slice(0, 400);
+      } catch { /* sin detalle */ }
+      throw llmError('http', `llmClient: HTTP ${res.status} ${res.statusText} ${detail}`.trim(), {
+        status: res.status,
+      });
     }
 
     return res;
   }
 
+  function chatBody(messages, stream) {
+    return {
+      model,
+      messages,
+      stream,
+      temperature: 0.7,
+      ...extra,
+    };
+  }
+
   return {
-    /**
-     * Non-streaming chat. Returns the assistant message content as a string.
-     * @param {Array<{role: string, content: string}>} messages
-     */
-    async chat(messages, { signal, onToken } = {}) {
-      const body = {
-        messages,
-        stream: false,
-        temperature: extra.temperature ?? 0.7,
-      };
-      const res = await request('/chat/completions', body, { signal });
+    /** Chat sin streaming: devuelve el texto completo de la respuesta. */
+    async chat(messages) {
+      const res = await request('/chat/completions', {
+        method: 'POST',
+        body: chatBody(messages, false),
+      });
       const data = await res.json();
-      const content =
-        data?.choices?.[0]?.message?.content ??
-        data?.choices?.[0]?.text ??
-        '';
+      const content = data?.choices?.[0]?.message?.content ?? data?.choices?.[0]?.text ?? '';
       if (typeof content !== 'string') {
-        throw new Error('llmClient: unexpected response shape (no content)');
+        throw new Error('llmClient: la respuesta no tiene contenido');
       }
-      if (onToken && content) onToken(content);
       return content;
     },
 
     /**
-     * Streaming chat (SSE). Calls `onToken(text)` as tokens arrive and
-     * resolves with the full accumulated string. Degrades gracefully: if
-     * the server ignores `stream:true` and returns a plain JSON body, we
-     * fall back to the non-streaming shape so a misconfigured llama.cpp
-     * still works.
-     *
-     * @param {Array<{role: string, content: string}>} messages
-     * @param {(token: string, full: string) => void} onToken
+     * Chat con streaming (SSE). Llama a `onToken(token, textoAcumulado)` a
+     * medida que llegan los tokens y resuelve con el texto completo. Si el
+     * servidor ignora `stream: true` y devuelve JSON normal, lo lee igual.
      */
-    async chatStream(messages, onToken, { signal } = {}) {
-      const body = { messages, stream: true, temperature: extra.temperature ?? 0.7 };
-      const res = await request('/chat/completions', body, { signal });
+    async chatStream(messages, onToken) {
+      const res = await request('/chat/completions', {
+        method: 'POST',
+        body: chatBody(messages, true),
+      });
       const ct = res.headers.get('content-type') || '';
 
-      // Non-SSE fallback (server returned a normal JSON completion).
-      if (!ct.includes('text/event-stream') && !res.body) {
+      if (!ct.includes('text/event-stream') || !res.body) {
         const data = await res.json();
         const content = data?.choices?.[0]?.message?.content ?? '';
-        if (onToken && content) onToken(content);
+        if (onToken && content) onToken(content, content);
         return content;
-      }
-      if (!res.body) {
-        throw new Error('llmClient: response had no body for streaming');
       }
 
       const reader = res.body.getReader();
@@ -161,28 +136,25 @@ export function createLlmClient({
         if (done) break;
         buffer += decoder.decode(value, { stream: true });
 
-        // SSE frames are separated by a blank line.
+        // Los eventos SSE se separan con una línea en blanco
         const parts = buffer.split(/\r?\n\r?\n/);
-        buffer = parts.pop(); // keep any partial trailing frame
+        buffer = parts.pop(); // el último puede estar incompleto
 
         for (const frame of parts) {
           for (const rawLine of frame.split(/\r?\n/)) {
             const line = rawLine.trim();
-            if (!line || !line.startsWith('data:')) continue;
+            if (!line.startsWith('data:')) continue;
             const payload = line.slice(5).trim();
             if (payload === '[DONE]') return full;
             try {
               const obj = JSON.parse(payload);
-              const delta = obj?.choices?.[0]?.delta?.content
-                ?? obj?.choices?.[0]?.text
-                ?? '';
+              const delta = obj?.choices?.[0]?.delta?.content ?? obj?.choices?.[0]?.text ?? '';
               if (delta) {
                 full += delta;
                 if (onToken) onToken(delta, full);
               }
             } catch {
-              // Ignore malformed frames; llama.cpp occasionally flushes
-              // keep-alive comments that are not JSON.
+              // Líneas que no son JSON (keep-alive): se ignoran
             }
           }
         }
@@ -191,62 +163,63 @@ export function createLlmClient({
     },
 
     /**
-     * Best-effort discovery of the loaded model id. llama.cpp exposes
-     * GET /models; some proxies do not. Returns '' when unavailable so
-     * callers can fall back to the configured model name.
+     * Comprueba si hay un servidor escuchando. Cualquier respuesta HTTP
+     * (incluso un error) cuenta como "en línea"; solo falla si no hay conexión.
      */
-    async getModelInfo() {
+    async ping() {
       try {
-        const res = await fetchImpl(`${base}/models`, { headers: buildHeaders() });
-        if (!res.ok) return '';
-        const data = await res.json();
-        return data?.data?.[0]?.id ?? '';
-      } catch {
-        return '';
+        await request('/models', { timeout: PING_TIMEOUT_MS });
+        return true;
+      } catch (err) {
+        return err.code === 'http';
       }
     },
   };
 }
 
+function llmError(code, message, { status, cause } = {}) {
+  const e = new Error(message);
+  e.code = code;
+  if (status !== undefined) e.status = status;
+  if (cause !== undefined) e.cause = cause;
+  return e;
+}
+
 /**
- * Validate + normalise user-facing config before building a client.
- * Kept separate so the component can surface readable errors early.
+ * Valida y normaliza la configuración antes de crear el cliente, para poder
+ * mostrar un error legible si la URL está mal.
  *
  * @returns {{ok: boolean, value?: object, error?: string}}
  */
 export function normalizeLlmConfig(raw) {
   const cfg = raw || {};
   const baseUrl = (cfg.baseUrl || '').trim();
-  if (!baseUrl) return { ok: false, error: 'A base URL is required (e.g. http://192.168.1.2:8080/v1).' };
+  if (!baseUrl) {
+    return { ok: false, error: 'Falta la URL del servidor del asistente (p. ej. http://127.0.0.1:8080/v1).' };
+  }
 
-  // Accepted shapes:
-  //   - a relative proxy path starting with "/" (e.g. "/v1"), which the dev
-  //     server or host SPA resolves same-origin, or
-  //   - an absolute http(s) URL.
+  // Se acepta una ruta relativa ("/v1", resuelta por un proxy) o una URL http(s)
   const isRelative = baseUrl.startsWith('/');
   const isAbsolute = /^https?:\/\//i.test(baseUrl);
   if (!isRelative && !isAbsolute) {
-    return { ok: false, error: 'The base URL must be a relative path (e.g. /v1) or an absolute http(s) URL.' };
+    return { ok: false, error: 'La URL del asistente debe ser una ruta relativa (/v1) o una URL http(s).' };
   }
 
-  let finalUrl;
-  if (isRelative) {
-    finalUrl = baseUrl;
-  } else {
-    let url;
+  let finalUrl = baseUrl;
+  if (isAbsolute) {
     try {
-      url = new URL(baseUrl);
+      const url = new URL(baseUrl);
+      finalUrl = url.origin + url.pathname.replace(/\/$/, '');
     } catch {
-      return { ok: false, error: 'The base URL is not a valid URL.' };
+      return { ok: false, error: 'La URL del asistente no es válida.' };
     }
-    finalUrl = url.origin + url.pathname.replace(/\/$/, '');
   }
 
   return {
     ok: true,
     value: {
       baseUrl: finalUrl,
-      apiKey: String(cfg['apiKey'] || '').trim(),
+      apiKey: String(cfg.apiKey || '').trim(),
       model: (cfg.model || 'default').trim(),
       temperature: Number.isFinite(cfg.temperature) ? cfg.temperature : 0.7,
     },

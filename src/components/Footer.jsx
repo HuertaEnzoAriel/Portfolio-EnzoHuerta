@@ -55,7 +55,7 @@ const CloseIcon = () => (
 const socials = [
   {
     label: "GitHub",
-    href: "#",
+    href: "https://github.com/HuertaEnzoAriel",
     Icon: GithubIcon,
     colorClass: "text-slate-900 dark:text-white hover:text-teal-600 dark:hover:text-teal-300",
   },
@@ -67,7 +67,7 @@ const socials = [
   },
   {
     label: "Instagram",
-    href: "#",
+    href: "https://www.instagram.com/enzo_7510/",
     Icon: InstagramIcon,
     colorClass: "text-slate-900 dark:text-white hover:text-red-600 dark:hover:text-red-400",
   },
@@ -79,11 +79,14 @@ const socials = [
   },
   {
     label: "Facebook",
-    href: "#",
+    href: "https://www.facebook.com/enzo.huerta.2025/",
     Icon: FacebookIcon,
     colorClass: "text-slate-900 dark:text-white hover:text-blue-700 dark:hover:text-blue-500",
   },
 ];
+
+// Las redes con href "#" todavía no tienen perfil: no se muestran hasta cargar el link
+const activeSocials = socials.filter(({ href }) => href && href !== "#");
 
 const CONTACT_EMAIL = "enzo.a.h75@gmail.com";
 const CONTACT_PHONE_DISPLAY = "+54 9 264 446-6742";
@@ -149,25 +152,34 @@ function ContactModal({ open, onClose }) {
         </p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <label htmlFor="contact-nombre" className="sr-only">Nombre</label>
           <input
+            id="contact-nombre"
             type="text"
             name="nombre"
             required
+            autoFocus
+            autoComplete="name"
             placeholder="Tu nombre"
             value={form.nombre}
             onChange={handleChange}
             className={inputStyles}
           />
+          <label htmlFor="contact-email" className="sr-only">Email</label>
           <input
+            id="contact-email"
             type="email"
             name="email"
             required
+            autoComplete="email"
             placeholder="Tu email"
             value={form.email}
             onChange={handleChange}
             className={inputStyles}
           />
+          <label htmlFor="contact-mensaje" className="sr-only">Mensaje</label>
           <textarea
+            id="contact-mensaje"
             name="mensaje"
             required
             rows={4}
@@ -219,6 +231,7 @@ export default function Footer() {
                 href={WHATSAPP_LINK}
                 target="_blank"
                 rel="noopener noreferrer"
+                title="Escribir por WhatsApp"
                 className="flex items-center gap-2 hover:text-teal-600 dark:hover:text-teal-300 transition-colors"
               >
                 <PhoneIcon /> {CONTACT_PHONE_DISPLAY}
@@ -235,10 +248,12 @@ export default function Footer() {
         </div>
 
         <div className="flex items-center justify-center gap-6 mt-12 pt-8 border-t border-slate-200 dark:border-white/10">
-          {socials.map(({ label, href, Icon, colorClass }) => (
+          {activeSocials.map(({ label, href, Icon, colorClass }) => (
             <a
               key={label}
               href={href}
+              target="_blank"
+              rel="noopener noreferrer"
               aria-label={label}
               className={`flex items-center justify-center w-11 h-11 rounded-full border border-slate-300 dark:border-white/10 hover:border-slate-400 hover:bg-slate-100 dark:hover:border-white/30 dark:hover:bg-white/10 transition-colors ${colorClass}`}
             >

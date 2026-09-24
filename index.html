@@ -1,10 +1,32 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>mi-app</title>
+    <title>Enzo Huerta</title>
+    <meta
+      name="description"
+      content="Portfolio de Enzo Huerta, desarrollador web: proyectos, habilidades, experiencia y contacto. Incluye un asistente IA que responde preguntas sobre el portfolio."
+    />
+    <meta name="author" content="Enzo Huerta" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Enzo Huerta | Desarrollador Web" />
+    <meta
+      property="og:description"
+      content="Proyectos, habilidades, experiencia y contacto de Enzo Huerta, desarrollador web."
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script>
+      // Aplica el tema guardado antes de que cargue React, para evitar un parpadeo
+      try {
+        const theme = localStorage.getItem("theme");
+        if (theme === "dark" || (!theme && matchMedia("(prefers-color-scheme: dark)").matches)) {
+          document.documentElement.classList.add("dark");
+        }
+      } catch {
+        // Sin acceso a localStorage: ThemeProvider decide el tema al cargar
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -1,4 +1,4 @@
-import profilePic from "../assets/profile-caricatura.png";
+import profilePic from "../assets/profile-caricatura.webp";
 
 export default function Home() {
   return (
@@ -31,7 +31,7 @@ export default function Home() {
             Hola, mi nombre es <span className="font-medium text-slate-700 dark:text-white">Enzo Huerta</span>
           </p>
           <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white leading-tight mb-6">
-            Descubrí Mi Trabajo con Soluciones Creativas
+            Descubrí mi trabajo con soluciones creativas
           </h1>
           <p className="text-slate-500 dark:text-slate-300 max-w-md mb-8">
             Soy un desarrollador web apasionado por crear experiencias digitales únicas y funcionales.
@@ -81,7 +81,10 @@ export default function Home() {
             <img
               src={profilePic}
               alt="Retrato caricaturesco de Enzo Huerta"
-              className="relative w-full rounded-2xl object-cover"
+              width={640}
+              height={854}
+              fetchPriority="high"
+              className="relative w-full h-auto rounded-2xl object-cover"
             />
           </div>
         </div>

@@ -5,7 +5,7 @@ import Proyectos from "./components/Proyectos";
 import Experiencia from "./components/Experiencia";
 import Footer from "./components/Footer";
 import Aurora from "./components/Aurora";
-import { useTheme } from "./context/ThemeContext";
+import { useTheme } from "./context/theme";
 import LlmAvatarAssistant from "./components/LlmAvatarAssistant";
 import "./styles.css";
 
@@ -16,12 +16,15 @@ const LIGHT_COLOR_STOPS = ["#6366f1", "#14b8a6", "#ec4899"];
 const ASSISTANT_CONFIG = {
   // Baja para que el modelo copie los datos tal cual y no invente
   temperature: 0.1,
+  offlineText:
+    "El asistente IA no está disponible en este momento. Mientras tanto, podés recorrer el portfolio o escribirle a Enzo desde la sección Contacto.",
+  // Los alias son palabras que, si aparecen en la pregunta, llevan a esa sección
   sectionDiscovery: [
-    { id: "home", title: "Inicio", aliases: ["Sobre mí"] },
-    { id: "habilidades", title: "Habilidades" },
-    { id: "proyectos", title: "Proyectos" },
-    { id: "experiencia", title: "Experiencia" },
-    { id: "contacto", title: "Contacto", aliases: ["Hablemos"] },
+    { id: "home", title: "Inicio", aliases: ["Sobre mí", "quién es"] },
+    { id: "habilidades", title: "Habilidades", aliases: ["tecnologías", "lenguajes", "skills"] },
+    { id: "proyectos", title: "Proyectos", aliases: ["trabajos", "VentasApp", "Anotador de Truco"] },
+    { id: "experiencia", title: "Experiencia", aliases: ["trayectoria", "estudios", "freelance"] },
+    { id: "contacto", title: "Contacto", aliases: ["Hablemos", "contactar", "email", "mail", "correo", "WhatsApp", "teléfono", "redes"] },
   ],
 };
 

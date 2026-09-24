@@ -1,32 +1,147 @@
+/* Asistente IA flotante (LlmAvatarAssistant) */
+
+/* Colores del modo claro (misma paleta slate/indigo que el resto de la página) */
+.lav-container {
+  --lav-surface: #ffffff;
+  --lav-border: #e2e8f0;
+  --lav-border-strong: #cbd5e1;
+  --lav-text: #0f172a;
+  --lav-text-soft: #475569;
+  --lav-text-muted: #64748b;
+  --lav-divider: #e2e8f0;
+  --lav-link: #4f46e5;
+  --lav-link-hover: #4338ca;
+  --lav-error: #dc2626;
+  --lav-error-bg: #fef2f2;
+  --lav-shadow: 0 4px 14px rgb(15 23 42 / 0.08);
+}
+
+/* Colores del modo oscuro */
+.dark .lav-container {
+  --lav-surface: #10111b;
+  --lav-border: #333;
+  --lav-border-strong: #444;
+  --lav-text: #ffffff;
+  --lav-text-soft: #cbd5e1;
+  --lav-text-muted: #94a3b8;
+  --lav-divider: #2a2b3a;
+  --lav-link: #a5b4fc;
+  --lav-link-hover: #c7d2fe;
+  --lav-error: #ff8080;
+  --lav-error-bg: #10111b;
+  --lav-shadow: none;
+}
+
 .lav-container {
   position: fixed;
-  right: 30px;
-  top: 50%;
-  transform: translateY(-50%);
+  bottom: 24px;
 
   width: 260px;
+  max-width: calc(100vw - 32px);
 
   display: flex;
   flex-direction: column;
   align-items: center;
 
-  z-index: 9999;
+  /* Debajo del navbar (z-50) y del modal de contacto (z-100) */
+  z-index: 40;
+}
+
+.lav-container:not(.is-open) {
+  width: auto;
 }
 
 .lav-side--left {
   left: 30px;
-  right: auto;
 }
 
 .lav-side--right {
   right: 30px;
-  left: auto;
+}
+
+.lav-panel {
+  width: 100%;
+}
+
+/* Estado de la conexión */
+.lav-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 4px;
+  padding: 0 4px;
+}
+
+.lav-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 2px 10px;
+
+  background: var(--lav-surface);
+  border: 1px solid var(--lav-border);
+  border-radius: 999px;
+
+  color: var(--lav-text-soft);
+  font-size: 12px;
+}
+
+.lav-status::before {
+  content: "";
+
+  width: 8px;
+  height: 8px;
+
+  border-radius: 50%;
+  background: #94a3b8;
+}
+
+.lav-status--online::before {
+  background: #22c55e;
+}
+
+.lav-status--offline::before {
+  background: #ef4444;
+}
+
+.lav-status--checking::before {
+  background: #eab308;
+  animation: lav-pulse 1s ease-in-out infinite;
+}
+
+@keyframes lav-pulse {
+  50% { opacity: 0.3; }
+}
+
+.lav-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 26px;
+  height: 26px;
+
+  background: var(--lav-surface);
+  border: 1px solid var(--lav-border);
+  border-radius: 50%;
+
+  color: var(--lav-text-soft);
+  font-size: 18px;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.lav-close:hover {
+  color: var(--lav-text);
+  border-color: var(--lav-border-strong);
 }
 
 /* Burbuja */
 .lav-bubble {
   width: 100%;
-  max-height: 240px;
 
   overflow-y: auto;
 
@@ -35,12 +150,31 @@
 
   box-sizing: border-box;
 
-  background: #10111b;
-  border: 1px solid #333;
+  background: var(--lav-surface);
+  border: 1px solid var(--lav-border);
   border-radius: 12px;
+  box-shadow: var(--lav-shadow);
 
-  color: white;
+  color: var(--lav-text);
   font-size: 14px;
+  line-height: 1.45;
+
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.lav-bubble p {
+  margin: 0;
+}
+
+.lav-bubble .lav-question {
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+
+  border-bottom: 1px solid var(--lav-divider);
+
+  color: var(--lav-text-muted);
+  font-style: italic;
 }
 
 /* Avatar */
@@ -49,7 +183,21 @@
   justify-content: center;
   align-items: center;
 
-  width: 100%;
+  padding: 0;
+
+  background: none;
+  border: none;
+  border-radius: 12px;
+
+  cursor: pointer;
+}
+
+.lav-avatar:focus-visible,
+.lav-close:focus-visible,
+.lav-button:focus-visible,
+.lav-link:focus-visible {
+  outline: 2px solid #7c5cff;
+  outline-offset: 2px;
 }
 
 .lav-avatar-image {
@@ -57,8 +205,23 @@
 
   width: 180px;
   height: auto;
+}
 
-  image-rendering: pixelated;
+.lav-avatar-image.is-busy {
+  filter: brightness(1.15);
+}
+
+/* En modo oscuro el contorno negro pasa a blanco y el azul se mantiene */
+.dark .lav-avatar-image {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+.dark .lav-avatar-image.is-busy {
+  filter: invert(1) hue-rotate(180deg) brightness(1.15);
+}
+
+.lav-container:not(.is-open) .lav-avatar-image {
+  width: 110px;
 }
 
 /* Input */
@@ -68,6 +231,9 @@
   width: 100%;
 
   margin-top: 8px;
+
+  border-radius: 10px;
+  box-shadow: var(--lav-shadow);
 }
 
 .lav-input {
@@ -77,19 +243,27 @@
 
   padding: 10px;
 
-  background: #10111b;
-  color: white;
+  background: var(--lav-surface);
+  color: var(--lav-text);
 
-  border: 1px solid #444;
+  border: 1px solid var(--lav-border-strong);
   border-radius: 10px 0 0 10px;
 
   outline: none;
 }
 
+.lav-input::placeholder {
+  color: var(--lav-text-muted);
+}
+
+.lav-input:focus {
+  border-color: #7c5cff;
+}
+
 .lav-button {
   padding: 10px 14px;
 
-  border: 1px solid #444;
+  border: 1px solid var(--lav-border-strong);
   border-left: none;
 
   border-radius: 0 10px 10px 0;
@@ -109,25 +283,73 @@
 .lav-error {
   width: 100%;
 
-  margin-top: 6px;
+  margin: 6px 0 0;
 
-  padding: 6px;
+  padding: 6px 8px;
 
   box-sizing: border-box;
 
-  color: #ff6b6b;
+  background: var(--lav-error-bg);
+  border-radius: 8px;
+
+  color: var(--lav-error);
   font-size: 12px;
 }
 
-/* Link a sección */
-.lav-section-link {
+/* Links dentro de la burbuja (secciones, URLs, reintentar) */
+.lav-link {
+  display: inline;
+
   border: none;
   padding: 0;
 
   background: none;
 
-  color: inherit;
+  color: var(--lav-link);
+  font: inherit;
   text-decoration: underline;
 
   cursor: pointer;
+}
+
+.lav-bubble > button.lav-link {
+  display: block;
+  margin-top: 8px;
+}
+
+.lav-link:hover {
+  color: var(--lav-link-hover);
+}
+
+/* Mismo fundido que la página al cambiar de tema */
+.lav-status,
+.lav-close,
+.lav-bubble,
+.lav-input,
+.lav-error {
+  transition: background-color 0.5s, color 0.5s;
+}
+
+/* Celulares: más chico y pegado a la esquina */
+@media (max-width: 767px) {
+  .lav-container {
+    bottom: 16px;
+    width: 300px;
+  }
+
+  .lav-side--left {
+    left: 16px;
+  }
+
+  .lav-side--right {
+    right: 16px;
+  }
+
+  .lav-avatar-image {
+    width: 110px;
+  }
+
+  .lav-container:not(.is-open) .lav-avatar-image {
+    width: 80px;
+  }
 }

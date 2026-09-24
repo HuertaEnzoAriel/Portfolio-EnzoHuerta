@@ -1,78 +1,66 @@
 /**
  * sectionScanner.js
  *
- * Detects references to on-page sections inside an LLM response and scrolls
- * the host SPA to them. This is pure/DOM-only (no three.js), so it is cheap
- * to unit-test under jsdom.
+ * Detecta las secciones de la página y desplaza la vista hasta ellas.
  *
- * Matching strategy (robust + deterministic, no fuzzy surprises):
- *   1. The host registers its sections via config: either an explicit list of
- *      {id, title, aliases[]} entries, or "auto" — in which case we read every
- *      <section id> / <footer id> / <h2 id> in the document and build entries
- *      automatically.
- *   2. A section is "referenced" when the model text contains its id or any of
- *      its titles/aliases, with case-insensitive, diacritic-insensitive, whole
- *      boundary matching (so "Hero" does not match "heroic").
- *   3. We return the referenced section that appears FIRST IN THE TEXT; the
- *      component scrolls to it (and can highlight the matched text).
+ *   1. Las secciones se registran con una lista explícita de
+ *      {id, title, aliases[]} o en modo "auto", leyendo cada
+ *      <section id> / <footer id> / <h2 id> / <h3 id> del documento.
+ *   2. Un texto "menciona" una sección cuando contiene su id, su título o un
+ *      alias como palabra completa, sin importar mayúsculas ni tildes
+ *      ("Hero" no coincide con "heroico").
+ *   3. Si hay varias, gana la que aparece primero en el texto.
  */
 
 import { normalize } from './utils.js';
 
 /**
- * Build the list of section descriptors to watch for.
+ * Arma la lista de secciones.
  *
  * @param {Document} [doc]
- * @param {Array} [explicit] optional explicit list from config
+ * @param {Array} [explicit] lista opcional desde la config
  * @returns {Array<{id: string, title: string, aliases: string[], el: () => Element|null}>}
  */
 export function collectSections(doc = globalThis.document, explicit) {
-  if (explicit && Array.isArray(explicit) && explicit.length) {
+  if (Array.isArray(explicit) && explicit.length) {
     return explicit
       .filter((s) => s && (s.id || s.title))
       .map((s) => ({
         id: s.id || slugify(s.title),
         title: s.title || s.id,
         aliases: normalizeAliases(s.aliases),
-        el: (d = doc) => findSectionEl(d, s.id, s.title, s.aliases),
+        el: () => findSectionEl(doc, s.id, s.title),
       }));
   }
 
   const out = [];
   const seen = new Set();
-  const nodes = doc.querySelectorAll('section[id], footer[id], h2[id], h3[id]');
-  nodes.forEach((node) => {
+  doc.querySelectorAll('section[id], footer[id], h2[id], h3[id]').forEach((node) => {
     const id = node.getAttribute('id');
     if (!id || seen.has(id)) return;
     seen.add(id);
 
-    // The visible title is the nearest heading inside/before the section, or
-    // the heading itself when the node is a heading.
-    let title = '';
-    if (node.matches('h2, h3')) {
-      title = node.textContent.trim();
-    } else {
-      const h = node.querySelector('h1, h2, h3');
-      title = h ? h.textContent.trim() : id;
-    }
-
+    // El título visible es el propio encabezado o el primero dentro de la sección
+    const heading = node.matches('h2, h3') ? node : node.querySelector('h1, h2, h3');
+    const title = heading ? heading.textContent.trim() : id;
     if (!title) return;
+
     out.push({
       id,
       title,
-      aliases: normalizeAliases([slugToTitle(id)]),
-      el: (d = doc) => findSectionEl(d, id, title),
+      aliases: [slugToTitle(id)],
+      el: () => findSectionEl(doc, id, title),
     });
   });
   return out;
 }
 
 /**
- * Scan `text` for the referenced section that appears first in the text.
+ * Busca la sección mencionada primero en `text`.
  *
  * @param {string} text
- * @param {Array} sections output of collectSections()
- * @returns {{section, matched, index} | null}
+ * @param {Array} sections salida de collectSections()
+ * @returns {{section, matched: string, index: number} | null}
  */
 export function findSectionReference(text, sections) {
   if (!text || !Array.isArray(sections) || !sections.length) return null;
@@ -80,9 +68,8 @@ export function findSectionReference(text, sections) {
 
   let best = null;
   for (const s of sections) {
-    const candidates = buildCandidates(s);
-    for (const cand of candidates) {
-      const idx = indexOfDiacriticInsensitive(hay, cand);
+    for (const cand of buildCandidates(s)) {
+      const idx = indexOfWord(hay, cand);
       if (idx !== -1 && (!best || idx < best.index)) {
         best = { section: s, matched: cand, index: idx };
       }
@@ -92,92 +79,66 @@ export function findSectionReference(text, sections) {
 }
 
 /**
- * Scroll the host page to a section. Returns true on success.
- * @param {string|Element} target id or element
+ * Desplaza la página hasta una sección. Devuelve true si la encontró.
+ *
+ * @param {string|Element} target id o elemento
  * @param {{behavior?: string, offset?: number, doc?: Document}} opts
  */
 export function scrollToSection(target, { behavior = 'smooth', offset = 0, doc = globalThis.document } = {}) {
   const el = typeof target === 'string' ? doc.getElementById(target) : target;
   if (!el) return false;
 
-  const top = getSectionTop(el, offset);
-  // window.scrollTo is the reliable cross-scroll-container path.
-  const scroller = doc.defaultView || globalThis.window;
-  if (scroller && typeof scroller.scrollTo === 'function') {
-    try {
-      scroller.scrollTo({ top, behavior });
-    } catch {
-      // Some environments (jsdom) throw "Not implemented"; fall through.
-    }
-    return true;
-  }
-  if (doc.documentElement) doc.documentElement.scrollTop = top;
+  const win = doc.defaultView || globalThis.window;
+  const top = Math.max(0, el.getBoundingClientRect().top + win.scrollY - offset);
+  win.scrollTo({ top, behavior });
   return true;
 }
 
-/* --------------------------- internals --------------------------- */
-
-function getSectionTop(el, offset) {
-  const rect = el.getBoundingClientRect ? el.getBoundingClientRect() : { top: 0 };
-  const win = el.ownerDocument?.defaultView || globalThis.window;
-  const scrollY = win?.scrollY ?? win?.pageYOffset ?? 0;
-  return Math.max(0, rect.top + scrollY - (offset || 0));
-}
+/* --------------------------- internos --------------------------- */
 
 function buildCandidates(s) {
-  const set = new Set();
-  // id (slug) and title (human) are the strongest signals.
-  if (s.id) set.add(s.id);
-  if (s.title) set.add(s.title);
-  (s.aliases || []).forEach((a) => a && set.add(a));
-  // Drop candidates that are too short to match reliably (<=2 chars) to avoid
-  // accidental whole-word hits.
+  const set = new Set([s.id, s.title, ...(s.aliases || [])].filter(Boolean));
+  // Se descartan candidatos de 2 letras o menos para evitar coincidencias casuales
   return [...set].map(normalize).filter((c) => c.length > 2);
 }
 
-function indexOfDiacriticInsensitive(hay, needle) {
-  const n = normalize(needle);
-  if (!n) return -1;
-  const i = hay.indexOf(n);
-  if (i === -1) return -1;
-  // Whole-boundary check: characters around the match must not be word chars,
-  // otherwise "hero" would match inside "heroic".
-  const before = hay[i - 1];
-  const after = hay[i + n.length];
+// Posición de `needle` en `hay` solo si es una palabra completa
+function indexOfWord(hay, needle) {
   const word = /[a-z0-9]/;
-  if (before && word.test(before)) return -1;
-  if (after && word.test(after)) return -1;
-  return i;
+  let i = hay.indexOf(needle);
+  while (i !== -1) {
+    const before = hay[i - 1];
+    const after = hay[i + needle.length];
+    if (!(before && word.test(before)) && !(after && word.test(after))) return i;
+    i = hay.indexOf(needle, i + 1);
+  }
+  return -1;
 }
 
-function findSectionEl(doc, id, title, aliases) {
+function findSectionEl(doc, id, title) {
   if (id && doc.getElementById(id)) return doc.getElementById(id);
-  // Fallback: locate by heading text (covers auto sections whose id was
-  // generated from the heading).
-  const normTitle = normalize(title || '');
-  const headings = doc.querySelectorAll('h1, h2, h3, [id]');
-  for (const h of headings) {
-    const hid = h.getAttribute('id');
-    if (hid && (hid === id || hid === title)) return h;
-    if (normTitle && normalize(h.textContent || '') === normTitle) return h;
+  // Si no hay id, se busca por el texto del encabezado
+  const normTitle = normalize(title);
+  if (!normTitle) return null;
+  for (const h of doc.querySelectorAll('h1, h2, h3')) {
+    if (normalize(h.textContent) === normTitle) return h;
   }
   return null;
 }
 
-export function slugify(str) {
+function slugify(str) {
   return String(str || '')
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[̀-ͯ]/g, '')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
 }
 
-export function slugToTitle(slug) {
+function slugToTitle(slug) {
   return String(slug || '').replace(/[-_]/g, ' ').trim();
 }
 
 function normalizeAliases(list) {
-  if (!Array.isArray(list)) return [];
-  return list.filter(Boolean).map((a) => String(a));
+  return Array.isArray(list) ? list.filter(Boolean).map(String) : [];
 }
