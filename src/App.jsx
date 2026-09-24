@@ -18,13 +18,16 @@ const ASSISTANT_CONFIG = {
   temperature: 0.1,
   offlineText:
     "El asistente IA no está disponible en este momento. Mientras tanto, podés recorrer el portfolio o escribirle a Enzo desde la sección Contacto.",
-  // Los alias son palabras que, si aparecen en la pregunta, llevan a esa sección
+  // Los alias son palabras que, si aparecen en la pregunta, llevan a esa sección.
+  // Además, al modelo se le manda solo el contenido de las secciones nombradas:
+  // cuantas más preguntas coincidan con un alias, más rápido responde.
+  // Van como palabras completas: "proyecto" no coincide con "proyectos".
   sectionDiscovery: [
-    { id: "home", title: "Inicio", aliases: ["Sobre mí", "quién es"] },
-    { id: "habilidades", title: "Habilidades", aliases: ["tecnologías", "lenguajes", "skills"] },
-    { id: "proyectos", title: "Proyectos", aliases: ["trabajos", "VentasApp", "Anotador de Truco"] },
-    { id: "experiencia", title: "Experiencia", aliases: ["trayectoria", "estudios", "freelance"] },
-    { id: "contacto", title: "Contacto", aliases: ["Hablemos", "contactar", "email", "mail", "correo", "WhatsApp", "teléfono", "redes"] },
+    { id: "home", title: "Inicio", aliases: ["Sobre mí", "quién es", "sobre Enzo"] },
+    { id: "habilidades", title: "Habilidades", aliases: ["tecnologías", "tecnología", "lenguajes", "herramientas", "stack", "skills", "sabe hacer"] },
+    { id: "proyectos", title: "Proyectos", aliases: ["proyecto", "trabajos", "aplicaciones", "VentasApp", "Anotador de Truco", "truco", "Portfolio Personal"] },
+    { id: "experiencia", title: "Experiencia", aliases: ["trayectoria", "estudios", "estudia", "estudió", "facultad", "carrera", "universidad", "freelance"] },
+    { id: "contacto", title: "Contacto", aliases: ["Hablemos", "contactar", "contactarlo", "email", "mail", "correo", "WhatsApp", "teléfono", "celular", "redes", "GitHub", "Instagram", "Facebook"] },
   ],
 };
 

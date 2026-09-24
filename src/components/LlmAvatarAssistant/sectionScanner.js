@@ -56,26 +56,37 @@ export function collectSections(doc = globalThis.document, explicit) {
 }
 
 /**
- * Busca la sección mencionada primero en `text`.
+ * Todas las secciones mencionadas en `text`, en el orden en que aparecen.
  *
  * @param {string} text
  * @param {Array} sections salida de collectSections()
- * @returns {{section, matched: string, index: number} | null}
+ * @returns {Array<{section, matched: string, index: number}>}
  */
-export function findSectionReference(text, sections) {
-  if (!text || !Array.isArray(sections) || !sections.length) return null;
+export function findSectionReferences(text, sections) {
+  if (!text || !Array.isArray(sections) || !sections.length) return [];
   const hay = normalize(text);
 
-  let best = null;
+  const found = [];
   for (const s of sections) {
+    let best = null;
     for (const cand of buildCandidates(s)) {
       const idx = indexOfWord(hay, cand);
       if (idx !== -1 && (!best || idx < best.index)) {
         best = { section: s, matched: cand, index: idx };
       }
     }
+    if (best) found.push(best);
   }
-  return best;
+  return found.sort((a, b) => a.index - b.index);
+}
+
+/**
+ * Busca la sección mencionada primero en `text`.
+ *
+ * @returns {{section, matched: string, index: number} | null}
+ */
+export function findSectionReference(text, sections) {
+  return findSectionReferences(text, sections)[0] || null;
 }
 
 /**

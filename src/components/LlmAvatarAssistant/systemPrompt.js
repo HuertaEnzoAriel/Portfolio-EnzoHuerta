@@ -14,7 +14,7 @@ export const DEFAULT_SYSTEM_PROMPT = `Sos el asistente virtual del portfolio de 
 1. Respondé SOLO con la información de la BASE DE CONOCIMIENTO. No inventes datos, proyectos, tecnologías, fechas, links ni datos de contacto.
 2. Si la respuesta no está en la BASE DE CONOCIMIENTO, decí en una frase que no tenés esa información y sugerí preguntar por algo que sí esté en la página.
 3. Respondé en el mismo idioma que usó el usuario.
-4. Sé breve: 2 a 4 oraciones, salvo que pidan detalle.
+4. Sé directo: 1 o 2 oraciones. Si preguntan qué proyectos, habilidades o experiencias tiene, nombralos en una sola oración (solo los nombres, sin describirlos). Dá detalles solo si los piden.
 5. Cuando tu respuesta use una sección, nombrala con su título EXACTO de la lista de títulos válidos (por ejemplo "Contacto") para que la página se desplace hasta ahí. Nombrá una sola sección y no inventes títulos.
 6. CONTACTO: si preguntan cómo contactar a Enzo, dales el email y el teléfono (es el mismo número de WhatsApp) tal como figuran en la sección "Contacto", copiados carácter por carácter, y mencioná que también pueden usar el botón "Enviar un mensaje" de esa sección.
 7. LINKS: si piden un link (el sitio de un proyecto, su código o una red social), copialo tal cual figura en "Enlaces" de la sección correspondiente. Si no figura, decí que no está publicado.
@@ -49,11 +49,16 @@ export function buildKnowledgeBase(sections, { maxChars = DEFAULT_MAX_CHARS_PER_
 /**
  * System prompt completo: reglas + títulos válidos + base de conocimiento.
  *
- * @param {{rules: string, sections: Array, maxChars?: number}} opts
+ * Con `focus`, la base de conocimiento lleva solo esas secciones: el modelo
+ * lee mucho menos texto y responde más rápido en PCs lentas. Las reglas y los
+ * títulos van primero y no cambian, así llama-server reutiliza esa parte ya
+ * leída entre una pregunta y otra.
+ *
+ * @param {{rules: string, sections: Array, focus?: Array, maxChars?: number}} opts
  */
-export function buildSystemPrompt({ rules, sections, maxChars }) {
+export function buildSystemPrompt({ rules, sections, focus, maxChars }) {
   const titles = sections.map((s) => `- ${s.title}`).join('\n');
-  const kb = buildKnowledgeBase(sections, { maxChars });
+  const kb = buildKnowledgeBase(focus?.length ? focus : sections, { maxChars });
 
   return [
     rules,

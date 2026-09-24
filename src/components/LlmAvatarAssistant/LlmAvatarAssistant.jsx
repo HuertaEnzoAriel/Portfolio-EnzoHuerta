@@ -10,7 +10,12 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 
 import { createLlmClient, normalizeLlmConfig } from './llmClient.js';
-import { collectSections, findSectionReference, scrollToSection } from './sectionScanner.js';
+import {
+  collectSections,
+  findSectionReference,
+  findSectionReferences,
+  scrollToSection,
+} from './sectionScanner.js';
 import { buildSystemPrompt, DEFAULT_SYSTEM_PROMPT } from './systemPrompt.js';
 import { cleanAnswer, displayMarkdown } from './utils.js';
 
@@ -21,6 +26,9 @@ const DEFAULT_CONFIG = {
   model: 'default',
   temperature: 0.7,
   timeoutMs: 120_000,
+  // Tope de tokens de cada respuesta: alcanza para 2 o 3 oraciones y evita
+  // que un modelo chico se extienda de más en una PC lenta
+  maxTokens: 200,
 
   defaultText: '¡Hola! ¿En qué puedo ayudarte?',
   offlineText:
@@ -64,7 +72,7 @@ export default function LlmAvatarAssistant({ config = {} }) {
         apiKey: res.value.apiKey,
         model: res.value.model,
         timeoutMs: cfg.timeoutMs,
-        extra: { temperature: res.value.temperature },
+        extra: { temperature: res.value.temperature, max_tokens: cfg.maxTokens },
       }),
       baseUrl: res.value.baseUrl,
       error: '',
@@ -85,6 +93,7 @@ export default function LlmAvatarAssistant({ config = {} }) {
   const bubbleRef = useRef(null);
   const sectionsRef = useRef([]);
   const historyRef = useRef([]);
+  const lastFocusRef = useRef([]);
   const stickToBottom = useRef(true);
 
   const { client } = llm;
@@ -149,6 +158,15 @@ export default function LlmAvatarAssistant({ config = {} }) {
     setBusy(true);
     stickToBottom.current = true;
 
+    // Si la pregunta nombra secciones ("¿qué proyectos tiene?"), se desplaza
+    // ahí sin esperar la respuesta y al modelo se le manda solo ese contenido.
+    // Si no nombra ninguna ("¿y el link?"), se sigue con las de la pregunta
+    // anterior; en la primera pregunta se manda toda la página.
+    const named = findSectionReferences(q, sectionsRef.current).map((r) => r.section);
+    const focus = named.length ? named : lastFocusRef.current;
+    lastFocusRef.current = focus;
+    if (named.length) goToSection(named[0]);
+
     // Se arma en cada pregunta para leer el contenido actual de la página
     const messages = [
       {
@@ -156,6 +174,7 @@ export default function LlmAvatarAssistant({ config = {} }) {
         content: buildSystemPrompt({
           rules: cfg.systemPrompt,
           sections: sectionsRef.current,
+          focus,
           maxChars: cfg.knowledgeMaxChars,
         }),
       },
@@ -182,12 +201,12 @@ export default function LlmAvatarAssistant({ config = {} }) {
         ].slice(-cfg.historyMessages);
       }
 
-      // Primero la sección que el usuario nombró en su pregunta (es lo más
-      // confiable); si no nombró ninguna, la que nombra la respuesta
-      const ref =
-        findSectionReference(q, sectionsRef.current) ||
-        findSectionReference(text, sectionsRef.current);
-      if (ref) goToSection(ref.section);
+      // Si la pregunta no nombró ninguna sección, se usa la que nombra la
+      // respuesta (si la nombró, la página ya se desplazó al preguntar)
+      if (!named.length) {
+        const ref = findSectionReference(text, sectionsRef.current);
+        if (ref) goToSection(ref.section);
+      }
     } catch (err) {
       if (err?.code === 'network') setStatus('offline');
       setAnswer(errorMessage(err));
