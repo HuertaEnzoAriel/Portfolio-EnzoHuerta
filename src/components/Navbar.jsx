@@ -6,7 +6,7 @@ import { useTheme } from "../context/theme";
 const NAV_TEXTS = ["Enzo Huerta", "Desarrollador Web"]; // agregá o quitá frases acá
 const TYPING_SPEED_MS = 80; // ms entre cada letra al escribir
 const DELETING_SPEED_MS = 25; // ms entre cada letra al borrar
-const PAUSE_AFTER_TYPING_MS = 2000; // tiempo que queda el texto completo antes de empezar a borrar
+const PAUSE_AFTER_TYPING_MS = 5000; // tiempo que queda el texto completo antes de empezar a borrar
 const PAUSE_AFTER_DELETING_MS = 500; // tiempo vacío antes de volver a escribir
 
 // Links de navegación, compartidos entre el menú de escritorio y el mobile
