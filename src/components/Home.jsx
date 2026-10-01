@@ -27,13 +27,10 @@ export default function Home() {
       <div className="max-w-7xl mx-auto px-6 py-16 md:py-24 grid md:grid-cols-2 items-center gap-12">
         {/* Columna de texto */}
         <div>
-          <p className="text-slate-500 dark:text-slate-300 mb-4">
-            Hola, mi nombre es <span className="font-medium text-slate-700 dark:text-white">Enzo Huerta</span>
+          <p className="text-4xl text-slate-700 dark:text-slate-300 mb-4">
+            Hola, mi nombre es <span className="text-4xl font-bold text-slate-900 dark:text-white"> Enzo Huerta </span>
           </p>
-          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white leading-tight mb-6">
-            Descubrí mi trabajo con soluciones creativas
-          </h1>
-          <p className="text-slate-500 dark:text-slate-300 max-w-md mb-8">
+          <p className="text-slate-900 dark:text-slate-300 max-w-md mb-8">
             Soy un desarrollador web apasionado por crear experiencias digitales únicas y funcionales.
             Mi enfoque se centra en combinar diseño atractivo con un rendimiento excepcional,
             asegurando que cada proyecto no solo se vea bien, sino que también funcione de manera eficiente.

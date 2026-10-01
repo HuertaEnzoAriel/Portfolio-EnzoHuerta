@@ -3,7 +3,7 @@ import { useTheme } from "../context/theme";
 
 // Textos y tiempos del efecto de escritura del nombre en el navbar.
 // Modificá estos valores para cambiar los textos, la velocidad y las pausas del efecto.
-const NAV_TEXTS = ["Enzo Huerta", "Desarrollador Web"]; // agregá o quitá frases acá
+const NAV_TEXTS = ["Enzo Huerta", "Software Engineer"]; // agregá o quitá frases acá
 const TYPING_SPEED_MS = 80; // ms entre cada letra al escribir
 const DELETING_SPEED_MS = 25; // ms entre cada letra al borrar
 const PAUSE_AFTER_TYPING_MS = 5000; // tiempo que queda el texto completo antes de empezar a borrar
